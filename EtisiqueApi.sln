@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34408.163
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EtisiqueApi", "EcommercePro\EtisiqueApi.csproj", "{6BEF532C-CDEC-4770-80D6-00673E193E6E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5FEAACE3-A870-4B1F-85FF-BB9669293C52}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6BEF532C-CDEC-4770-80D6-00673E193E6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BEF532C-CDEC-4770-80D6-00673E193E6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BEF532C-CDEC-4770-80D6-00673E193E6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BEF532C-CDEC-4770-80D6-00673E193E6E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F689B754-B920-4DDA-8E1B-4459214B7F59}
+	EndGlobalSection
+EndGlobal
