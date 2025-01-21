@@ -1,23 +1,30 @@
 ﻿using EcommercePro.Models;
 using EtisiqueApi.DTO;
+using EtisiqueApi.Models;
 using EtisiqueApi.Repositiories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Stripe.Terminal;
 
 namespace EtisiqueApi.Repositiories
 {
 	public class ProjectService : GenaricService<Project>, IProjectService
 	{
-		private readonly DbSet<Project> _Project;
-		public ProjectService(Context context) :base(context)
+		private readonly Context _dbContext;
+		private IFileService _fileService;
+		private IHttpContextAccessor _contextAccessor;
+
+		public ProjectService(Context context, IFileService fileService, IHttpContextAccessor contextAccessor) :base(context)
 		{
-            _Project = context.Set<Project>();
+            _dbContext= context;
+			_fileService = fileService;
+			_contextAccessor = contextAccessor;
 		}
 
         public IQueryable<ProjectResponse> GetAllProjects(string? search)
         {
            if(search == null)
             {
-                return _Project.AsNoTracking().Include(p => p.CreatedBy)
+                return _dbContext.Projects.AsNoTracking().Include(p => p.CreatedBy)
                  .OrderByDescending(p=>p.Id)
                  .Where(p=>p.IsDeleted==false)
                .Select(p => new ProjectResponse()
@@ -38,7 +45,7 @@ namespace EtisiqueApi.Repositiories
 
                }).AsQueryable();
             }
-            return _Project.AsNoTracking().Include(p => p.CreatedBy)
+            return _dbContext.Projects.AsNoTracking().Include(p => p.CreatedBy)
                 .OrderByDescending(p => p.CreatedDate)
                 .Where(p => p.IsDeleted == false)
                 .Where(P => P.ProjectName.Contains(search)).Select(p => new ProjectResponse()
@@ -62,13 +69,96 @@ namespace EtisiqueApi.Repositiories
 
         public override async Task<Project> GetByIdAsync(int id)
         {
-			return await _Project.Include(p => p.CreatedBy).FirstOrDefaultAsync(p => p.IsDeleted == false && p.Id == id);
+			return await _dbContext.Projects.Include(p => p.CreatedBy)
+                .FirstOrDefaultAsync(p => p.IsDeleted == false && p.Id == id);
         }
-
-        public List<Project> GetProjects()
+		public async Task<Project> GetByIdByInclude(int id)
+		{
+			return await _dbContext.Projects.Include(p => p.CreatedBy)
+                .Include(p=>p.ProjectImages)
+				.FirstOrDefaultAsync(p => p.IsDeleted == false && p.Id == id);
+		}
+		public List<Project> GetProjects()
         {
-            return _Project.AsNoTracking().Where(p=>p.IsDeleted==false && p.ProjectStatus==1).Select(P=>new Project{ ProjectName = P.ProjectName, Id = P.Id } ).ToList();
+            return _dbContext.Projects.AsNoTracking()
+                .Where(p=>p.IsDeleted==false && p.ProjectStatus==1)
+                .Select(P=>new Project{ ProjectName = P.ProjectName, Id = P.Id } ).ToList();
         }
 
-    }
+		public async  Task<(bool Succeeded, string[] Errors)> SetProjectImages(List<IFormFile> files , int proId)
+		{
+			try
+			{
+				var context = _contextAccessor.HttpContext.Request;
+				var baseurl = context.Scheme + "://" + context.Host;
+
+				List<ProjectImages> images = new List<ProjectImages>();
+				foreach (IFormFile file in files)
+				{
+					var result = await _fileService.SaveImage2("Project", file, baseurl);
+					if (result.Succeeded)
+					{
+						images.Add(new ProjectImages()
+						{
+							ProjectId = proId,
+							imagePath = result.imagePath
+ 						});
+					}
+					else
+					{
+						return (false, result.Errors);
+
+					}
+				}
+				_dbContext.ProjectImages.AddRange(images);
+				_dbContext.SaveChanges();
+				return (true, null);
+			}
+			catch (Exception ex)
+			{
+				return (false, new string[] { ex.Message });
+			}
+		}
+
+		public async Task<(bool Succeeded, string[] Errors)> UpdateProjectImages(List<IFormFile> files, int proId)
+		{
+			try
+			{
+				var OldProjectImages = _dbContext.ProjectImages.Where(i => i.ProjectId == proId);
+				if (OldProjectImages != null)
+				{
+					_dbContext.ProjectImages.RemoveRange(OldProjectImages);
+
+				}
+				var context = _contextAccessor.HttpContext.Request;
+				var baseurl = context.Scheme + "://" + context.Host;
+
+				List<ProjectImages> images = new List<ProjectImages>();
+				foreach (IFormFile file in files)
+				{
+					var result = await _fileService.SaveImage2("Project", file, baseurl);
+					if (result.Succeeded)
+					{
+						images.Add(new ProjectImages()
+						{
+							ProjectId = proId,
+							imagePath = result.imagePath
+						});
+					}
+					else
+					{
+						return (false, result.Errors);
+
+					}
+				}
+				_dbContext.ProjectImages.AddRange(images);
+				_dbContext.SaveChanges();
+				return (true, null);
+			}
+			catch (Exception ex)
+			{
+				return (false, new string[] { ex.Message });
+			}
+		}
+	}
 }

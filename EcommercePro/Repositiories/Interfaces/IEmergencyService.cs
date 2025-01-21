@@ -23,5 +23,9 @@ namespace EtisiqueApi.Repositiories.Interfaces
             string BuildingName = null, int UnitNo = 0, string ClientPhone = null, string Status = null, string Code = null, int day = 0, int week = 0,
             int year = 0, int month = 0, DateOnly from = default, DateOnly to = default);
         public Task<(bool Succeeded, string[] Errors)> Add(EmergencyRequestDto.EmergencyRequestToAdd emergencyRequestToAdd);
+        public Task<(bool Succeeded, string[] Errors)> Delete(int id);
+
+
     }
+
 }

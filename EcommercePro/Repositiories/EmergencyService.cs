@@ -195,42 +195,42 @@ namespace EtisiqueApi.Repositiories
             {
                 requests = requests.Where(R => R.Project.ProjectName.Contains(projectName));
             }
-            else if (Type != 0)
+            if (Type != 0)
             {
                 requests = requests.Where(R => R.EmergencyId == Type);
 
             }
-            else if (techniciId != null)
+            if (techniciId != null)
             {
                 requests = requests.Where(R => R.TechnicianId == techniciId);
 
             }
-            else if (ClientName != null)
+            if (ClientName != null)
             {
                 requests = requests.Where(R => R.Customer.ApplicationUser.FullName.Contains(ClientName));
 
             }
-            else if (BuildingName != null)
+            if (BuildingName != null)
             {
                 requests = requests.Where(R => R.BuildingName.Contains(BuildingName));
 
             }
-            else if (Code != null)
+            if (Code != null)
             {
                 requests = requests.Where(R => R.RequestCode.ToString().Contains(Code));
 
             }
-            else if (Status != null)
+            if (Status != null)
             {
                 requests = requests.Where(R => R.RequestStuatus == Status);
 
             }
-            else if (UnitNo != 0)
+            if (UnitNo != 0)
             {
                 requests = requests.Where(R => R.UnitNo == UnitNo);
 
             }
-            else if (ClientPhone != null)
+           if (ClientPhone != null)
             {
                 requests = requests.Where(R => R.ApplicationUser.PhoneNumber.Contains(ClientPhone));
 
@@ -734,42 +734,42 @@ namespace EtisiqueApi.Repositiories
             {
                 requests = requests.Where(R => R.Project.ProjectName.Contains(projectName));
             }
-            else if (type != 0)
+              if (type != 0)
             {
                 requests = requests.Where(R => R.EmergencyId == type);
 
             }
-            else if (techniciId != null)
+              if (techniciId != null)
             {
                 requests = requests.Where(R => R.TechnicianId == techniciId);
 
             }
-            else if (ClientName != null)
+              if (ClientName != null)
             {
                 requests = requests.Where(R => R.Customer.ApplicationUser.FullName.Contains(ClientName));
 
             }
-            else if (BuildingName != null)
+              if (BuildingName != null)
             {
                 requests = requests.Where(R => R.BuildingName.Contains(BuildingName));
 
             }
-            else if (Code != null)
+              if (Code != null)
             {
                 requests = requests.Where(R => R.RequestCode.ToString().Contains(Code));
 
             }
-            else if (Status != null)
+              if (Status != null)
             {
                 requests = requests.Where(R => R.RequestStuatus == Status);
 
             }
-            else if (UnitNo != 0)
+              if (UnitNo != 0)
             {
                 requests = requests.Where(R => R.UnitNo == UnitNo);
 
             }
-            else if (ClientPhone != null)
+              if (ClientPhone != null)
             {
                 requests = requests.Where(R => R.Customer.ApplicationUser.PhoneNumber.Contains(ClientPhone));
 
@@ -880,11 +880,30 @@ namespace EtisiqueApi.Repositiories
             return emergency;
         }
 
-        
-
-     
 
 
+
+
+        public async Task<(bool Succeeded, string[] Errors)> Delete(int id)
+        {
+            try
+            {
+               Models.Emergency Emergency = await GetByIdAsync(id);
+                if (Emergency != null)
+                {
+                    _context.Emergencies.Remove(Emergency);
+                    await _context.SaveChangesAsync();
+                    return (true, null);
+                }
+                return (false, new string[] { "can`t delete this Reuest" });
+
+            }
+            catch (Exception ex)
+            {
+                return (false, new string[] { "can`t delete this Reuest" });
+            }
+
+        }
 
 
 

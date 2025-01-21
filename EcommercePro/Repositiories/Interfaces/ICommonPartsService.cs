@@ -6,13 +6,13 @@ namespace EtisiqueApi.Repositiories.Interfaces
     public interface ICommonPartsService : IGenaricService<RequestsCommonParts>
     {
         public RequestsCommonParts LastOrder();
-        public IQueryable<RequestsCommonParts> FilterRequestsBy(string projectName = null, int TypeServiceId = 0, string techniciId = null,
-            string ManagerId = null, string BuildingName = null, string Status = null, string Code = null, bool IsUrget = false, int day = 0
-            ,int week=0,int year=0,int month=0,DateOnly from=default , DateOnly to=default, int Note = 0);
+        public IQueryable<RequestsCommonParts> FilterRequestsBy(string projectName, int TypeServiceId, string techniciId,
+			string ManagerId, string BuildingName, string Status, string Code, bool IsUrget = false, int day = 0
+			, int week = 0, int year = 0, int month = 0, DateOnly from = default, DateOnly to = default, int ConfRequest = 0);
 
-        public IQueryable<RequestsCommonParts> GetRequestToProjectsManager(List<int> Projects, string projectName, int TypeServiceId, string techniciId,
-         string ManagerId, string BuildingName, string Status, string Code, bool IsUrget = false, int day = 0
-         , int week = 0, int year = 0, int month = 0, DateOnly from = default, DateOnly to = default, int Note = 0);
+        public IQueryable<RequestsCommonParts> GetRequestToProjectsManager(string userId, List<int> Projects, string projectName, int TypeServiceId, string techniciId,
+		 string ManagerId, string BuildingName, string Status, string Code, bool IsUrget = false, int day = 0
+		 , int week = 0, int year = 0, int month = 0, DateOnly from = default, DateOnly to = default, int ConfRequest = 0);
         public CommonPartsResponse Get(int id);
 
         public Task<(bool Succeeded, string[] Errors)> Transfer(TransferDto tranferData);
@@ -26,7 +26,14 @@ namespace EtisiqueApi.Repositiories.Interfaces
         public Task<(bool Succeeded, string[] Errors)> Up(CommonPartsmanagmentDto UpDataDto);
         public IQueryable<RequestsCommonParts> GetTechincanRequest(string techincanId, string stauts, int day=0);
         public IQueryable<RequestsCommonParts> GetManagerRequest(string managerId, string stauts, int day = 0);
-        
+
+		public Task<(bool Succeeded, string[] Errors)> ApproveRequestMethod2(ApproveRequestDto approveRequest);
+		public Task<(bool Succeeded, string[] Errors)> ApproveRequestMethod1(ApproveRequestDto approveRequest);
+
+		public Task<(bool Succeeded, string[] Errors)> AcceptRequest(ReplyDto acceptRequest);
+		public Task<(bool Succeeded, string[] Errors)> RefuseRequest(ReplyDto acceptRequest);
+
+        public Task<(bool Succeeded, string[] Errors)> Delete(int id);
 
     }
 

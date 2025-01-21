@@ -57,13 +57,24 @@ namespace EtisiqueApi.Controllers
 					CreatedById = project.CreatedById,
 					ImageUrl= project.ImageUrl,
 					CreatedDate = dateAfter3Hours,
+					hasGuarantee = project.hasGuarantee
+
 				};
 				var result = await _projectService.AddAsync(newProject);
 				if (!result.Succeeded)
 				{
                        return BadRequest(result.Errors);
 				}
-				return Ok(newProject.Id);
+				if(project.formFiles!=null && project.formFiles.Count() > 0)
+				{
+					var result2 = await _projectService.SetProjectImages(project.formFiles, newProject.Id);
+					if (!result2.Succeeded)
+					{
+						return BadRequest(result2.Errors);
+					}
+				}
+				
+				return Ok();
              }
 			return BadRequest(ModelState);
 
@@ -111,13 +122,22 @@ namespace EtisiqueApi.Controllers
  					projectDb.ImageUrl = project.ImageUrl;
 					projectDb.CreatedDate = projectDb.CreatedDate;
                     projectDb.UpdatedDate = dateAfter3Hours;
+				    projectDb.hasGuarantee = project.hasGuarantee;
 
 					var Result  = _projectService.Update(projectDb);
 					if (!Result.Succeeded)
 					{
 						return BadRequest(Result.Errors);
 					}
-					return Ok();
+					if (project.formFiles != null && project.formFiles.Count() > 0)
+					{
+						var result2 = await _projectService.SetProjectImages(project.formFiles, projectDb.Id);
+						if (!result2.Succeeded)
+						{
+							return BadRequest(result2.Errors);
+						}
+					}
+				return Ok();
 				
 			}
 			return BadRequest(ModelState);
@@ -204,10 +224,10 @@ namespace EtisiqueApi.Controllers
         }
        
 		[HttpGet("Project/{projectId}")]
-       // [Authorize(policy: "projects.view")]
+        [Authorize(policy: "projects.view")]
  		public async Task<IActionResult> GetProject(int projectId)
 		{
-            Project projectDb = await _projectService.GetByIdAsync(projectId);
+            Project projectDb = await _projectService.GetByIdByInclude(projectId);
 
             if (projectDb == null)
             {
@@ -227,7 +247,8 @@ namespace EtisiqueApi.Controllers
                 Neighborhood = projectDb.Neighborhood,
                 CreatedBy = projectDb.CreatedBy.FullName,
                 Address = projectDb.Address,
-                Description = projectDb.Description
+                Description = projectDb.Description,
+				images=projectDb.ProjectImages.Select(i=>i.imagePath).ToList(),
             });
         }
 

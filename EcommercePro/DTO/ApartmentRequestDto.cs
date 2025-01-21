@@ -30,8 +30,10 @@ namespace EtisiqueApi.DTO
         public double Longitude { get; set; }
         public string CloseCode { set; get; }
         public string? TechnicianPhone { set; get; }
+        public bool? hasGuarante { set; get; }
         public List<string> images { set; get; }
         public ServicesVerificationsDto servicesVerification { set; get; }
+        public int ProjectId { set; get; }
 
     }
     public class ServicesVerificationsDto
@@ -42,6 +44,7 @@ namespace EtisiqueApi.DTO
         public string? Note { get; set; }
         public string? File { set; get; }
         public string? TimeElapsed { set; get; }
+        public string ApproverId { set; get; }
     }
 
 }

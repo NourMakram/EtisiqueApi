@@ -23,7 +23,8 @@ namespace EtisiqueApi.DTO
 		[Required(ErrorMessage = "Address  is Required")]
 		public string Address { get; set; }
 		public string? ImageUrl { get; set; }
-		public IFormFile? FileUrl { get; set; }
+		public IFormFile? FileUrl { set; get; } //logo
+		public List<IFormFile>? formFiles { get; set; } //images
 
 		[Required(ErrorMessage = "Buiding Number is Required")]
 		public int BuidingNo { get; set; }
@@ -32,16 +33,17 @@ namespace EtisiqueApi.DTO
 		public int UnitNo { get; set; }
 		public string? CreatedById { get; set; }
 
+		public bool  hasGuarantee { set; get; } 
+			 
 
 
-		
 
 	}
 	public class ProjectResponse
 	{
         public int Id { get; set; }
         public string ProjectName { get; set; }
-        public string? Description { get; set; }
+        public string Description { get; set; }
         public string Neighborhood { get; set; }
         public string City { get; set; }
         public string Address { get; set; }
@@ -52,6 +54,7 @@ namespace EtisiqueApi.DTO
         public string? CreatedDate { get; set; }
         public string? UpdatedDate { get; set; }
         public string ProjectStatus { get; set; }   // 1 on ,  2  off
+		public List<string> images { set; get; }
 
     }
 	public class projectList()

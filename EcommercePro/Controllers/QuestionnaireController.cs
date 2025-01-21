@@ -1,6 +1,7 @@
 ﻿using EtisiqueApi.DTO;
 using EtisiqueApi.Models;
 using EtisiqueApi.Pagination;
+using EtisiqueApi.Repositiories;
 using EtisiqueApi.Repositiories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -119,6 +120,19 @@ namespace EtisiqueApi.Controllers
         {
             Shrt shortCut = _ShortService.get(Id);
             return Ok(shortCut);
+        }
+
+        [HttpDelete]
+        [Authorize(policy: "Questionnaires.Delete")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _questionnaireService.Delete(id);
+            if (!result.Succeeded)
+            {
+
+                return BadRequest(result.Errors);
+            }
+            return Ok();
         }
 
     }

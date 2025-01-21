@@ -9,20 +9,19 @@ namespace EtisiqueApi.Controllers
     [ApiController]
     public class TestController : ControllerBase
     {
-        private MessageSender2.IMessageSender _messageSender;
-        public TestController(MessageSender2.IMessageSender messageSender) {
+        private IConfiguration configuration;
+        public TestController(IConfiguration _configuration) {
 
-            _messageSender = messageSender;
-        }
-     [HttpGet ]
-    [AllowAnonymous]
-        public async Task<IActionResult> TestSMS(string message, string phones)
+            configuration = _configuration;
+         }
+
+        [HttpGet ]
+        [AllowAnonymous]
+        public  IActionResult GetLasVersion()
         {
- 
-            if (await _messageSender.Send3Async(phones, message + DateTime.UtcNow.Ticks.ToString(), null))
-                return Ok();
+            var Version = this.configuration.GetSection("AppVersion");
+            return Ok(new {version = Version.Value});
 
-            return BadRequest("Unable to send");
         }
 
     }

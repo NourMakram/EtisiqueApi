@@ -106,7 +106,10 @@ namespace EtisiqueApi.Repositiories
         }
         public IQueryable<Client> ClientsReservation(string projectName = null, string buildingName = null, string ClientName = null, string ClientPhone = null, DateOnly from = default, DateOnly to = default)
         {
-            var results = _Customer.Include(C => C.ApplicationUser).ThenInclude(C => C.Project).Where(c => c.IsReceived == true);
+            var results = _Customer.Include(C => C.ApplicationUser)
+				.ThenInclude(C => C.Project)
+				.OrderByDescending(C=>C.Id)
+                .Where(c => c.IsReceived == true);
 
             if (projectName != null)
             {

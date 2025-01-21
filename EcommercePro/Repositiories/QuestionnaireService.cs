@@ -445,6 +445,7 @@ namespace EtisiqueApi.Repositiories
 
         }
 
+
         public bool IsRated(int requestId, int typeservice)
         {
             return _Context.Questionnaires.Any(q => q.RequestId == requestId && q.ServiceType == typeservice);
@@ -463,6 +464,35 @@ namespace EtisiqueApi.Repositiories
 
             }
             return result;
+        }
+
+        public async Task<(bool Succeeded, string[] Errors)> Delete(int id)
+        {
+            try
+            {
+                Questionnaire questionnaire = await GetByIdAsync(id);
+
+                if (questionnaire != null)
+                {
+                   IQueryable<TechnicianQusetions> technicianQusetions = _Context.TechnicianQusetions.Where(T => T.questionnaireId == questionnaire.Id);
+                    if (technicianQusetions != null)
+                    {
+                        _Context.TechnicianQusetions.RemoveRange(technicianQusetions);
+                        //await _Context.SaveChangesAsync();
+
+                    }
+                    _Context.Questionnaires.Remove(questionnaire);
+                    await _Context.SaveChangesAsync();
+                    return (true, null);
+                }
+                return (false, new string[] { "can`t delete this Reuest" });
+
+            }
+            catch (Exception ex)
+            {
+                return (false, new string[] { "can`t delete this Reuest" });
+            }
+
         }
     }
 

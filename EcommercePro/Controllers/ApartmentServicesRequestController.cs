@@ -120,8 +120,8 @@ namespace EtisiqueApi.Controllers
                          CloseCode = CloseCode,
                         RequestStuatus = "جديد",
                         projectId =apartmentService.projectId,
-                        BuildingName=apartmentService.BuildingName,
-                        UnitNo=apartmentService.UnitNo,
+                        BuildingName= customerdb.BulidingName,
+                        UnitNo= customerdb.UnitNo,
                     };
                     var result2 = await _apartmentServices.AddAsync(Request);
 
@@ -399,6 +399,17 @@ namespace EtisiqueApi.Controllers
             return Ok();
         }
 
+        [HttpDelete]
+        [Authorize(policy: "maintenanceRequests.Delete")]
+        public async Task<IActionResult> Delete(int id)
+        {
+           var result =await  _apartmentServices.Delete(id);
+            if (result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+            return Ok();
+        }
 
     }
 }

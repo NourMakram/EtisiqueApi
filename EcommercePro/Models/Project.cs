@@ -42,6 +42,9 @@ namespace EcommercePro.Models
 		public List<Contract>? Contract { set; get; }
 		public List<Guarantee>? Guarantee { set; get; }
 
+		public bool hasGuarantee { get; set; } = false;
+
+		public List<ProjectImages>? ProjectImages { set; get; }
 
 
 	}

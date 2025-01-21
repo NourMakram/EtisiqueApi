@@ -167,17 +167,7 @@ namespace EtisiqueApi.Controllers
         }
 
 
-        //[HttpGet("ProjectsManager/{UserId}/{Page}/{PageSize}")]
-        //[AllowAnonymous]
-        //[Authorize(policy: "Complaints.ProjectManager")]
-        //public async Task<IActionResult> ProjectManagerRequests(string UserId, int Page = 1, int PageSize = 10, string techniciId = null, int Code = 0,
-        // string Status = null, string ClientName = null, string ProjectName = null, int day = 0, int week = 0, int Year = 0, int Month = 0)
-
-        //{
-        //    var Requests = await _complaintService.GetRequestToProjectsManager(UserId,techniciId, Code, Status, ClientName, ProjectName, day, week, Year, Month)
-        //            .ToPaginatedListAsync(Page, PageSize);
-        //    return Ok(Requests);
-        //}
+         
 
 
 

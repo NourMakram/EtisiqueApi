@@ -11,11 +11,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Stripe.Terminal;
 using System.Text;
-using static EtisiqueApi.Repositiories.MessageSender2;
 
 public class Program
 {

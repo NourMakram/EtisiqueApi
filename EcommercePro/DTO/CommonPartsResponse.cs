@@ -44,6 +44,11 @@ namespace EtisiqueApi.DTO
         public string? ManagerPhone { set; get; }
         public string ManagerNote { set; get; }
         public List<string> images { set; get; }
+		public ServicesVerificationsDto servicesVerification { set; get; }
+        public int ProjectId { set; get; }
+
+        public string timeElasped { set; get; }
+
 
     }
 }

@@ -68,54 +68,54 @@ namespace EtisiqueApi.Repositiories
             {
                 requests = requests.Where(R => R.Project.ProjectName.Contains(projectName));
              }
-            else if (TypeServiceId != 0)
+              if (TypeServiceId != 0)
             {
                 requests = requests.Where(R => R.ServiceTypeId==TypeServiceId);
 
             }
-            else if (techniciId != null)
+              if (techniciId != null)
             {
                 requests = requests.Where(R => R.TechnicianId == techniciId);
 
             }
-            else if (ClientName != null)
+              if (ClientName != null)
             {
                 requests = requests.Where(R=>R.ClientName.Contains(ClientName));
 
             }
-            else if (BuildingName != null)
+              if (BuildingName != null)
             {
                 requests = requests.Where(R => R.BuildingName.Contains(BuildingName));
 
             }
-            else if (Code != null)
+              if (Code != null)
             {
                 requests = requests.Where(R => R.RequestCode.ToString().Contains(Code));
 
             }
-            else if (Status != null)
+              if (Status != null)
             {
                 requests = requests.Where(R => R.RequestStuatus == Status);
 
             }
-            else if(UnitNo != 0)
+              if(UnitNo != 0)
             {
                 requests = requests.Where(R => R.UnitNo == UnitNo);
 
             }
-            else if (ClientPhone != null)
+              if (ClientPhone != null)
             {
                 requests = requests.Where(R => R.ClientPhone.Contains(ClientPhone));
 
             }
-            else if(day > 0)
+              if(day > 0)
             {
                 DateOnly currentData = DateOnly.FromDateTime(DateTime.Now);
                 requests = requests.Where(R => R.RequestStuatus == "جديد" && DateOnly.FromDateTime(R.DateOfVisit) == currentData);
 
 
             }
-            else if (week > 0)
+              if (week > 0)
             {
                 // تحديد بداية ونهاية الأسبوع الحالي
                 DateOnly startOfWeek = DateOnly.FromDateTime(DateTime.Now.StartOfWeek(DayOfWeek.Sunday));
@@ -125,13 +125,13 @@ namespace EtisiqueApi.Repositiories
                 requests = requests.Where(R => DateOnly.FromDateTime(R.DateOfVisit) >= startOfWeek && DateOnly.FromDateTime(R.DateOfVisit) < endOfWeek);
 
             }
-            else if (month > 0)
+              if (month > 0)
             {
                 int CurrentMonth = DateTime.Now.Month;
                 requests = requests.Where(R => R.DateOfVisit.Month == CurrentMonth);
 
             }
-            else if (year > 0)
+              if (year > 0)
             {
                 int CurrentYear = DateTime.Now.Year;
 
@@ -206,6 +206,7 @@ namespace EtisiqueApi.Repositiories
                 {
                   ApproverName=R.Approver.FullName,
                   IsApproved=R.IsApproved,
+                  ApproverId=R.ApproverID,
                   Fees=R.Fees,
                   File=R.File,
                   Note=R.Note,
@@ -243,7 +244,8 @@ namespace EtisiqueApi.Repositiories
                                         Longitude=R.Location.Longitude,
                                         CloseCode=R.CloseCode,
                                         images=images,
-                                        servicesVerification= RequestVerivication
+                                        hasGuarante=R.hasGuarantee,
+                                        servicesVerification = RequestVerivication
                                     }).ToList();
             return apartmentServicesRequest;
 
@@ -368,7 +370,9 @@ namespace EtisiqueApi.Repositiories
                         timeElasped = R.TimeElapsed,
                          Latitude = R.Location.Latitude,
                         Longitude = R.Location.Longitude,
-                        CloseCode = R.CloseCode
+                        CloseCode = R.CloseCode,
+                        ProjectId = R.projectId
+
                     }).AsQueryable();
         }
         public async Task<(bool Succeeded, string[] Errors)> CloseRequest(CloseDto close)
@@ -644,54 +648,54 @@ namespace EtisiqueApi.Repositiories
             {
                 requests = requests.Where(R => R.Project.ProjectName.Contains(projectName));
             }
-            else if (TypeServiceId != 0)
+              if (TypeServiceId != 0)
             {
                 requests = requests.Where(R => R.ServiceTypeId == TypeServiceId);
 
             }
-            else if (techniciId != null)
+              if (techniciId != null)
             {
                 requests = requests.Where(R => R.TechnicianId == techniciId);
 
             }
-            else if (ClientName != null)
+              if (ClientName != null)
             {
                 requests = requests.Where(R => R.ClientName.Contains(ClientName));
 
             }
-            else if (BuildingName != null)
+              if (BuildingName != null)
             {
                 requests = requests.Where(R => R.BuildingName.Contains(BuildingName));
 
             }
-            else if (Code != null)
+              if (Code != null)
             {
                 requests = requests.Where(R => R.RequestCode.ToString().Contains(Code));
 
             }
-            else if (Status != null)
+              if (Status != null)
             {
                 requests = requests.Where(R => R.RequestStuatus == Status);
 
             }
-            else if (UnitNo != 0)
+              if (UnitNo != 0)
             {
                 requests = requests.Where(R => R.UnitNo == UnitNo);
 
             }
-            else if (ClientPhone != null)
+              if (ClientPhone != null)
             {
                 requests = requests.Where(R => R.ClientPhone.Contains(ClientPhone));
 
             }
-            else if (day > 0)
+              if (day > 0)
             {
                 DateOnly currentData = DateOnly.FromDateTime(DateTime.Now);
                 requests = requests.Where(R => R.RequestStuatus == "جديد" && DateOnly.FromDateTime(R.DateOfVisit) == currentData);
 
 
             }
-            else if (week > 0)
+              if (week > 0)
             {
                 // تحديد بداية ونهاية الأسبوع الحالي
                 DateOnly startOfWeek = DateOnly.FromDateTime(DateTime.Now.StartOfWeek(DayOfWeek.Sunday));
@@ -701,13 +705,13 @@ namespace EtisiqueApi.Repositiories
                 requests = requests.Where(R => DateOnly.FromDateTime(R.DateOfVisit) >= startOfWeek && DateOnly.FromDateTime(R.DateOfVisit) < endOfWeek);
 
             }
-            else if (month > 0)
+              if (month > 0)
             {
                 int CurrentMonth = DateTime.Now.Month;
                 requests = requests.Where(R => R.DateOfVisit.Month == CurrentMonth);
 
             }
-            else if (year > 0)
+              if (year > 0)
             {
                 int CurrentYear = DateTime.Now.Year;
 
@@ -772,7 +776,8 @@ namespace EtisiqueApi.Repositiories
                         timeElasped = R.TimeElapsed,
                         Latitude = R.Location.Latitude,
                         Longitude = R.Location.Longitude,
-                        CloseCode = R.CloseCode
+                        CloseCode = R.CloseCode,
+                        ProjectId=R.projectId
                     }).AsQueryable();
         }
         public bool change()
@@ -896,14 +901,14 @@ namespace EtisiqueApi.Repositiories
                     return (false, result2.Errors);
                 }
 
-                //var messageToApprover = MessageSender2.Messages.ApproveRequest(Request.RequestCode);
-                //var SendMessageResult = await _messageSender.Send3Async(ApartmentServicesVerifications.Approver.PhoneNumber, messageToApprover, null);
+                var messageToApprover = MessageSender2.Messages.ApproveRequest(Request.RequestCode);
+                var SendMessageResult = await _messageSender.Send3Async(ApartmentServicesVerifications.Approver.PhoneNumber, messageToApprover, null);
 
-                //if (!SendMessageResult)
-                //{
-                //    _RequestManagmentService.Rollback(trans);
-                //    return (false, new string[] { "Failed To send Message" });
-                //}
+                if (!SendMessageResult)
+                {
+                    _RequestManagmentService.Rollback(trans);
+                    return (false, new string[] { "Failed To send Message" });
+                }
 
                 _RequestManagmentService.Commit(trans);
 
@@ -1057,6 +1062,25 @@ namespace EtisiqueApi.Repositiories
             }
         }
 
+        public async Task<(bool Succeeded, string[] Errors)> Delete(int id)
+        {
+            try
+            {
+                ApartmentServicesRequest apartmentService = await GetByIdAsync(id);
+                if (apartmentService != null)
+                {
+                    _context.ApartmentServicesRequests.Remove(apartmentService);
+                    await _context.SaveChangesAsync();
+                    return (true, null);
+                }
+                return (false, new string[] { "can`t delete this Reuest" });
 
+            }
+            catch (Exception ex)
+            {
+                return (false, new string[] { "can`t delete this Reuest" });
+            }
+
+        }
     }
 }

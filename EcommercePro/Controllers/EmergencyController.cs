@@ -205,5 +205,18 @@ namespace EtisiqueApi.Controllers
            }).ToList()
             );
         }
+
+        [HttpDelete]
+        [Authorize(policy: "EmergencyRequests.Delete")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _emergencyService.Delete(id);
+            if (result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+            return Ok();
+        }
+
     }
 }

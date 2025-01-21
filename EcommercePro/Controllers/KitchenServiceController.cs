@@ -420,39 +420,50 @@ namespace EtisiqueApi.Controllers
            }).ToList()
             );
         }
-     //   [HttpGet("ProjectsManager/{UserId}/{pageNumber}/{pageSize}")]
-     //   [Authorize(policy: "KitchenServices.projectManager")]
-     //   public async Task<IActionResult> GetProjectsToManager(string UserId,int pageNumber = 1, int pageSize = 7, string projectName = null, string techniciId = null, string ClientName = null,
-     //   string BuildingName = null, int UnitNo = 0, string ClientPhone = null, string Code = null, string Stauts = null, int day = 0)
-     //   {
-     //       var Requests = await _KitchenService.GetRequestToProjectsManager(UserId, projectName, techniciId, ClientName, BuildingName, UnitNo, ClientPhone, Code, Stauts, day)
-     //.Select(R => new KitchenServiceResponse()
-     //{
-     //    id = R.id,
-     //    projectName = R.Project.ProjectName,
-     //    BuildingName = R.BuildingName,
-     //    UnitNo = R.UnitNo,
-     //    ClientPhone = R.ClientPhone,
-     //    ClientName = R.ClientName,
-     //    TechnicianName = R.Technician.FullName,
-     //    RequestCode = R.RequestCode,
-     //    CreatedDate = R.CreatedDate.ToString("dd-MM-yyyy | hh:mm:ss tt"),
-     //    RequestStuatus = R.RequestStuatus,
-     //    NumDays = R.NumDays,
-     //    TechnicianPhone = R.Technician.PhoneNumber,
-     //    Longitude = R.Location.Longitude,
-     //    Latitude = R.Location.Latitude,
-     //    AgreementFile = R.AgreementFile,
-     //    Area = R.Area,
-     //    RequestImage = R.RequestImage,
-     //    Description = R.Description,
-     //    Period = R.Period,
+        [HttpDelete]
+        [Authorize(policy: "KitchenServices.Delete")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _KitchenService.Delete(id);
+            if (result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+            return Ok();
+        }
+        //   [HttpGet("ProjectsManager/{UserId}/{pageNumber}/{pageSize}")]
+        //   [Authorize(policy: "KitchenServices.projectManager")]
+        //   public async Task<IActionResult> GetProjectsToManager(string UserId,int pageNumber = 1, int pageSize = 7, string projectName = null, string techniciId = null, string ClientName = null,
+        //   string BuildingName = null, int UnitNo = 0, string ClientPhone = null, string Code = null, string Stauts = null, int day = 0)
+        //   {
+        //       var Requests = await _KitchenService.GetRequestToProjectsManager(UserId, projectName, techniciId, ClientName, BuildingName, UnitNo, ClientPhone, Code, Stauts, day)
+        //.Select(R => new KitchenServiceResponse()
+        //{
+        //    id = R.id,
+        //    projectName = R.Project.ProjectName,
+        //    BuildingName = R.BuildingName,
+        //    UnitNo = R.UnitNo,
+        //    ClientPhone = R.ClientPhone,
+        //    ClientName = R.ClientName,
+        //    TechnicianName = R.Technician.FullName,
+        //    RequestCode = R.RequestCode,
+        //    CreatedDate = R.CreatedDate.ToString("dd-MM-yyyy | hh:mm:ss tt"),
+        //    RequestStuatus = R.RequestStuatus,
+        //    NumDays = R.NumDays,
+        //    TechnicianPhone = R.Technician.PhoneNumber,
+        //    Longitude = R.Location.Longitude,
+        //    Latitude = R.Location.Latitude,
+        //    AgreementFile = R.AgreementFile,
+        //    Area = R.Area,
+        //    RequestImage = R.RequestImage,
+        //    Description = R.Description,
+        //    Period = R.Period,
 
 
-     //}).ToPaginatedListAsync(pageNumber, pageSize);
-     //       return Ok(Requests);
+        //}).ToPaginatedListAsync(pageNumber, pageSize);
+        //       return Ok(Requests);
 
-     //   }
+        //   }
 
     }
 

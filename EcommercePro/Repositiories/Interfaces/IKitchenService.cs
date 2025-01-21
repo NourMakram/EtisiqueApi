@@ -22,6 +22,7 @@ namespace EtisiqueApi.Repositiories.Interfaces
         public IQueryable<KitchenServices> GetRequestToProjectsManager(List<int> projects, string projectName = null, string techniciName = null, string ClientName = null,
         string BuildingName = null, int UnitNo = 0, string ClientPhone = null, string Code = null, string Stauts = null, int day = 0);
 
+        public Task<(bool Succeeded, string[] Errors)> Delete(int id);
 
 
     }

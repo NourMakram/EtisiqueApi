@@ -20,8 +20,9 @@ namespace EtisiqueApi.Repositiories
         private ISubServiceRequestService _subServiceRequestService;
         IEmailService _emailService;
         IRequestImage _requestImage;
-        MessageSender2.IMessageSender _messageSender; 
-        public CommonPartsService(Context context ,IRequestImage requestImage, IRequestManagement requestManagmentService, IAcountService acountService,
+        MessageSender2.IMessageSender _messageSender;
+        private IFileService _fileService;
+        public CommonPartsService(Context context, IFileService fileService ,IRequestImage requestImage, IRequestManagement requestManagmentService, IAcountService acountService,
             ISubServiceRequestService subServiceRequestService, IEmailService emailService,MessageSender2.IMessageSender messageSender) : base(context)
         {
 
@@ -32,6 +33,7 @@ namespace EtisiqueApi.Repositiories
             _emailService = emailService;
             _messageSender=messageSender;
             _requestImage = requestImage;
+            _fileService = fileService;
         }
 
  
@@ -41,9 +43,9 @@ namespace EtisiqueApi.Repositiories
             return _context.RequestCommonParts.AsNoTracking().OrderBy(r => r.CreatedDate).LastOrDefault();
 
         }
-        public IQueryable<RequestsCommonParts> GetRequestToProjectsManager(List<int>Projects,string projectName, int TypeServiceId, string techniciId,
+        public IQueryable<RequestsCommonParts> GetRequestToProjectsManager(string userId ,List<int>Projects,string projectName, int TypeServiceId, string techniciId,
          string ManagerId, string BuildingName, string Status, string Code, bool IsUrget = false, int day = 0
-         , int week = 0, int year = 0, int month = 0, DateOnly from = default, DateOnly to = default, int Note = 0)
+         , int week = 0, int year = 0, int month = 0, DateOnly from = default, DateOnly to = default, int ConfRequest = 0)
         {
             var Requests = _context.RequestCommonParts.AsNoTracking()
                 .Where(R => Projects.Any(userProject => userProject == R.projectId))
@@ -57,42 +59,42 @@ namespace EtisiqueApi.Repositiories
             {
                 Requests = Requests.Where(R => R.Project.ProjectName.Contains(projectName));
             }
-            else if (TypeServiceId != 0)
+             if (TypeServiceId != 0)
             {
                 Requests = Requests.Where(R => R.ServiceTypeId == TypeServiceId);
             }
-            else if (techniciId != null)
+             if (techniciId != null)
             {
                 Requests = Requests.Where(R => R.TechnicianId == techniciId);
             }
-            else if (BuildingName != null)
+             if (BuildingName != null)
             {
                 Requests = Requests.Where(R => R.BuildingName == BuildingName);
             }
-            else if (Code != null)
+             if (Code != null)
             {
                 Requests = Requests.Where(R => R.RequestCode.ToString().Contains(Code));
             }
-            else if (Status != null)
+             if (Status != null)
             {
                 Requests = Requests.Where(R => R.RequestStuatus == Status);
             }
-            else if (IsUrget == true)
+             if (IsUrget == true)
             {
                 Requests = Requests.Where(R => R.IsUrgent == IsUrget);
 
             }
-            else if (ManagerId != null)
+              if (ManagerId != null)
             {
                 Requests = Requests.Where(R => R.ManagerId == ManagerId);
             }
-            else if (day > 0)
+              if (day > 0)
             {
                 DateOnly currentData = DateOnly.FromDateTime(DateTime.Now);
                 Requests = Requests.Where(R => R.RequestStuatus == "جديد" && DateOnly.FromDateTime(R.DateOfVisit) == currentData);
 
             }
-            else if (week > 0)
+             if (week > 0)
             {
                 // تحديد بداية ونهاية الأسبوع الحالي
                 DateOnly startOfWeek = DateOnly.FromDateTime(DateTime.Now.StartOfWeek(DayOfWeek.Sunday));
@@ -102,13 +104,13 @@ namespace EtisiqueApi.Repositiories
                 Requests = Requests.Where(R => DateOnly.FromDateTime(R.CreatedDate) >= startOfWeek && DateOnly.FromDateTime(R.CreatedDate) < endOfWeek);
 
             }
-            else if (month > 0)
+             if (month > 0)
             {
                 int CurrentMonth = DateTime.Now.Month;
                 Requests = Requests.Where(R => R.CreatedDate.Month == CurrentMonth);
 
             }
-            else if (year > 0)
+             if (year > 0)
             {
                 int CurrentYear = DateTime.Now.Year;
 
@@ -126,16 +128,30 @@ namespace EtisiqueApi.Repositiories
 
 
             }
-            if (Note > 0)
-            {
-                Requests = Requests.Where(R => R.ManagerNote != null);
+			if (ConfRequest != 0)
+			{
+				if (ConfRequest == 1)
+				{
+					Requests = Requests.Where(R => R.RequestStuatus == "جارى التعميد" && R.CommonPartsVerifications.ApproverID == userId);
 
-            }
-            return Requests;
+				}
+				if (ConfRequest == 2)
+				{
+					Requests = Requests.Where(R => R.RequestStuatus == "مقبول" && R.IsConfirmation == true && R.CommonPartsVerifications.ApproverID == userId);
+
+				}
+				if (ConfRequest == 3)
+				{
+					Requests = Requests.Where(R => R.RequestStuatus == "مرفوض" && R.IsConfirmation == true && R.CommonPartsVerifications.ApproverID == userId);
+
+				}
+			}
+		
+			return Requests;
         }
         public IQueryable<RequestsCommonParts> FilterRequestsBy(string projectName, int TypeServiceId, string techniciId,
             string ManagerId, string BuildingName, string Status, string Code, bool IsUrget = false, int day = 0
-            , int week = 0, int year = 0, int month = 0, DateOnly from = default, DateOnly to = default,int Note=0)
+            , int week = 0, int year = 0, int month = 0, DateOnly from = default, DateOnly to = default, int ConfRequest = 0)
         {
             var Requests = _context.RequestCommonParts.AsNoTracking()
                        .OrderByDescending(R => R.id)
@@ -148,42 +164,42 @@ namespace EtisiqueApi.Repositiories
             {
                 Requests = Requests.Where(R => R.Project.ProjectName.Contains(projectName));
             }
-            else if (TypeServiceId != 0)
+             if (TypeServiceId != 0)
             {
                 Requests = Requests.Where(R => R.ServiceTypeId == TypeServiceId);
             }
-            else if (techniciId != null)
+             if (techniciId != null)
             {
                 Requests = Requests.Where(R => R.TechnicianId == techniciId);
             }
-            else if (BuildingName != null)
+             if (BuildingName != null)
             {
                 Requests = Requests.Where(R => R.BuildingName == BuildingName);
             }
-            else if (Code != null)
+             if (Code != null)
             {
                 Requests = Requests.Where(R => R.RequestCode.ToString().Contains(Code));
             }
-            else if (Status != null)
+             if (Status != null)
             {
                 Requests = Requests.Where(R => R.RequestStuatus == Status);
             }
-            else if (IsUrget == true)
+             if (IsUrget == true)
             {
                 Requests = Requests.Where(R => R.IsUrgent == IsUrget);
 
             }
-            else if(ManagerId != null)
+             if(ManagerId != null)
             {
                 Requests = Requests.Where(R => R.ManagerId == ManagerId);
             }
-            else if(day > 0)
+             if(day > 0)
             {
                 DateOnly currentData = DateOnly.FromDateTime(DateTime.Now);
                 Requests = Requests.Where(R => R.RequestStuatus == "جديد" && DateOnly.FromDateTime(R.DateOfVisit) == currentData);
 
             }
-            else if (week > 0)
+             if (week > 0)
             {
                  // تحديد بداية ونهاية الأسبوع الحالي
                 DateOnly startOfWeek = DateOnly.FromDateTime(DateTime.Now.StartOfWeek(DayOfWeek.Sunday));
@@ -193,13 +209,13 @@ namespace EtisiqueApi.Repositiories
                 Requests = Requests.Where(R =>DateOnly.FromDateTime(R.CreatedDate) >= startOfWeek && DateOnly.FromDateTime(R.CreatedDate) < endOfWeek);
 
             }
-            else if (month > 0)
+             if (month > 0)
             {
                 int CurrentMonth = DateTime.Now.Month;
                 Requests = Requests.Where(R => R.CreatedDate.Month == CurrentMonth);
 
             }
-            else if (year > 0)
+             if (year > 0)
             {
                 int CurrentYear = DateTime.Now.Year;
 
@@ -216,21 +232,46 @@ namespace EtisiqueApi.Repositiories
                  Requests = Requests.Where(R =>DateOnly.FromDateTime(R.CreatedDate) <= to && DateOnly.FromDateTime(R.CreatedDate) >= from);
 
             }
-            if(Note> 0)
-            {
-                Requests = Requests.Where(R =>R.ManagerNote!=null);
+			if (ConfRequest != 0)
+			{
+				if (ConfRequest == 1)
+				{
+					Requests = Requests.Where(R => R.RequestStuatus == "جارى التعميد");
 
-            }
-            return Requests;
+				}
+				if (ConfRequest == 2)
+				{
+					Requests = Requests.Where(R => R.RequestStuatus == "مقبول" && R.IsConfirmation == true);
+
+				}
+				if (ConfRequest == 3)
+				{
+					Requests = Requests.Where(R => R.RequestStuatus == "مرفوض" && R.IsConfirmation == true);
+
+				}
+			}
+			return Requests;
         }
         public CommonPartsResponse Get(int id)
         {
             var SubServices = _subServiceRequestService.GetSubServices(id, (int)ServiceTypeEnum.CommonParts);
             List<string> images = _requestImage.GetImages(id, (int)ServiceTypeEnum.CommonParts);
 
+			var RequestVerivication = _context.CommonPartsVerifications.Include(R => R.Approver)
+			   .Where(R => R.RequestId == id)
+			   .Select(R => new ServicesVerificationsDto()
+			   {
+				   ApproverName = R.Approver.FullName,
+				   IsApproved = R.IsApproved,
+				   ApproverId = R.ApproverID,
+				   Fees = R.Fees,
+				   File = R.File,
+				   Note = R.Note,
+				   TimeElapsed = R.TimeElapsed
+			   }).FirstOrDefault();
 
 
-            return _context.RequestCommonParts.AsNoTracking()
+			return _context.RequestCommonParts.AsNoTracking()
                                     .Include(R => R.Manager)
                                     .Include(R => R.Technician)
                                     .Include(R => R.Project)
@@ -248,7 +289,7 @@ namespace EtisiqueApi.Repositiories
                                         TechnicianPhone=R.Technician.PhoneNumber,
                                          SubServices = SubServices,
                                         Description = R.Description,
-                                        IsUrgent = R.IsUrgent==true?"تعم":"لا",
+                                        IsUrgent = R.IsUrgent==true?"نعم":"لا",
                                         CreatedDate = R.CreatedDate.ToString("dd-MM-yyyy | hh:mm:ss tt"),
                                         DateOfVisit = R.DateOfVisit.ToString("dd-MM-yyyy | hh:mm:ss tt"),
                                         UpdatedDate = R.UpdatedDate.ToString("dd-MM-yyyy | hh:mm:ss tt"),
@@ -257,8 +298,11 @@ namespace EtisiqueApi.Repositiories
                                         ServiceType = R.ServiceType.Name,
 										UnitNo = R.UnitNo,
 										Type = R.Type == 1 ? "داخل" : "خارج",
-                                        images=images
-									}).FirstOrDefault(R => R.id == id);
+                                        images=images,
+                                        servicesVerification= RequestVerivication,
+                                        timeElasped = R.TimeElapsed
+
+                                    }).FirstOrDefault(R => R.id == id);
         }
         public async Task<(bool Succeeded, string[] Errors) >Transfer(TransferDto tranferData)
         {
@@ -352,47 +396,6 @@ namespace EtisiqueApi.Repositiories
 
         }
 
-        //public async Task<(bool Succeeded, string[] Errors)> PartialClose(CommonPartsmanagmentDto PartialCloseData)
-        //{
-        //    //get Technician
-        //    RequestsCommonParts Request = await GetByIdAsync(PartialCloseData.RequestId);
-        //    if (Request == null)
-        //    {
-        //        return (false, new string[] { "Request Not Found" });
-
-        //    }
- 
-        //    var currentDate = DateTime.UtcNow;
-
-        //    // Increase the hour by 3
-        //    var dateAfter3Hours = currentDate.AddHours(3);
-
-        //    RequestManagement PartialClose = new RequestManagement()
-        //    {
-        //        RequestId = PartialCloseData.RequestId,
-        //        ProcedureType = "اقفال",
-        //        userId = PartialCloseData.userId,
-        //        CreatedDate = dateAfter3Hours,
-        //        Notes = Message,
-        //        ServiceType = (int)ServiceTypeEnum.CommonParts,
-        //        Attachments = PartialCloseData.filePath
-
-
-        //    };
-        //    var result = await RequestManagment(PartialClose);
-
-        //    if (!result.Succeeded)
-        //    {
-        //        return (false, result.Errors);
-        //    }
-        //    Request.RequestStuatus = "اقفال جزئى";
-        //    Request.UpdatedDate = dateAfter3Hours;
-
-        //    var result2 = Update(Request);
-
-        //    return (result2.Succeeded, result2.Errors);
-
-        //}
 
         public async Task<(bool Succeeded, string[] Errors)> Comment(CommonPartsmanagmentDto CommentData)
         {
@@ -748,6 +751,291 @@ namespace EtisiqueApi.Repositiories
                   return (false, null);
 
             }
+        }
+
+		public async Task<(bool Succeeded, string[] Errors)> ApproveRequestMethod2(ApproveRequestDto approveRequest)
+		{
+			var trans = await _RequestManagmentService.BeginTransactionAsync();
+
+			try
+			{
+				var Request = await GetByIdAsync(approveRequest.RequestId);
+				var CommonPartsVerifications = _context.CommonPartsVerifications
+					.Include(r => r.Approver)
+					.FirstOrDefault(r => r.RequestId == approveRequest.RequestId && r.IsApproved == false);
+
+				if (Request == null)
+				{
+					return (false, new string[] { "Request Not Found" });
+				}
+
+				var results = await ApproveRequestMethod1(approveRequest);
+
+				if (!results.Succeeded)
+				{
+					return (false, results.Errors);
+				}
+
+				var currentDate = DateTime.UtcNow;
+				var dateAfter3Hours = currentDate.AddHours(3);
+
+				var Approve = new RequestManagement()
+				{
+					RequestId = approveRequest.RequestId,
+					ProcedureType = "تعميد",
+					userId = approveRequest.userId,
+					CreatedDate = dateAfter3Hours,
+					Notes = "تم تعميد الطلب",
+					ServiceType = (int)ServiceTypeEnum.CommonParts
+				};
+
+				var result = await _RequestManagmentService.AddAsync(Approve);
+
+				if (!result.Succeeded)
+				{
+					return (result.Succeeded, result.Errors);
+				}
+
+				Request.RequestStuatus = "جارى التعميد";
+				Request.IsConfirmation = true;
+				var result2 = Update(Request);
+
+				if (!result2.Succeeded)
+				{
+					return (false, result2.Errors);
+				}
+
+                var messageToApprover = MessageSender2.Messages.ApproveRequest(Request.RequestCode);
+                var SendMessageResult = await _messageSender.Send3Async(CommonPartsVerifications.Approver.PhoneNumber, messageToApprover, null);
+
+                if (!SendMessageResult)
+                {
+                    _RequestManagmentService.Rollback(trans);
+                    return (false, new string[] { "Failed To send Message" });
+                }
+
+                _RequestManagmentService.Commit(trans);
+
+				return (true, null);
+			}
+			catch (Exception ex)
+			{
+				_RequestManagmentService.Rollback(trans);
+				return (false, new string[] { ex.Message });
+			}
+		}
+
+		public  async Task<(bool Succeeded, string[] Errors)> ApproveRequestMethod1(ApproveRequestDto approveRequest)
+		{
+			try
+			{
+				var request = _context.CommonPartsVerifications.FirstOrDefault(r => r.RequestId == approveRequest.RequestId && r.IsApproved == false);
+				var imageUrl = "";
+
+				if (approveRequest.FormFile != null)
+				{
+					var result1 = await _fileService.SaveImage("Attachments", approveRequest.FormFile);
+					if (!result1.Succeeded)
+					{
+						return (result1.Succeeded, result1.Errors);
+					}
+					imageUrl = result1.imagePath;
+				}
+
+				if (request == null)
+				{
+					var commonpartsServices = new CommonPartsVerifications
+					{
+						ApproverID = approveRequest.ApproverId,
+						RequestId = approveRequest.RequestId,
+						Fees = approveRequest.Fees,
+						Note = approveRequest.Note,
+						IsApproved = false,
+						File = imageUrl
+					};
+
+					_context.CommonPartsVerifications.Add(commonpartsServices);
+				}
+				else
+				{
+					request.ApproverID = approveRequest.ApproverId;
+					request.Fees = approveRequest.Fees;
+					request.Note = approveRequest.Note;
+					request.File = imageUrl;
+					_context.CommonPartsVerifications.Update(request);
+				}
+
+				await _context.SaveChangesAsync();
+
+				return (true, null);
+			}
+			catch (Exception ex)
+			{
+				return (false, new string[] { ex.Message });
+			}
+		}
+
+		public async Task<(bool Succeeded, string[] Errors)> AcceptRequest(ReplyDto acceptRequest)
+		{
+			var trans = await _RequestManagmentService.BeginTransactionAsync();
+
+			try
+			{
+				var Request = await GetByIdAsync(acceptRequest.RequestId);
+				var CommonPartsVerifications = _context.CommonPartsVerifications
+					.Include(r => r.Approver)
+					.FirstOrDefault(r => r.RequestId == acceptRequest.RequestId && r.IsApproved == false);
+
+				if (Request == null || CommonPartsVerifications == null)
+				{
+					return (false, new string[] { "Request Not Found" });
+				}
+
+				var currentDate = DateTime.UtcNow;
+				var dateAfter3Hours = currentDate.AddHours(3);
+
+				var Approve = new RequestManagement()
+				{
+					RequestId = acceptRequest.RequestId,
+					ProcedureType = "قبول تعميد",
+					userId = acceptRequest.userId,
+					CreatedDate = dateAfter3Hours,
+					Notes = acceptRequest.Message,
+					ServiceType = (int)ServiceTypeEnum.CommonParts
+				};
+
+				var result = await _RequestManagmentService.AddAsync(Approve);
+
+				if (!result.Succeeded)
+				{
+					return (result.Succeeded, result.Errors);
+				}
+
+				Request.RequestStuatus = "مقبول";
+				var result2 = Update(Request);
+
+				if (!result2.Succeeded)
+				{
+					return (false, result2.Errors);
+				}
+
+				TimeSpan resultDate = (dateAfter3Hours - Request.DateOfVisit);
+				TimeSpan timeElapsed = new TimeSpan(resultDate.Days, resultDate.Hours, resultDate.Minutes, 0);
+				CommonPartsVerifications.TimeElapsed = string.Format("{0}:{1:D2}:{2:D2}", timeElapsed.Days, timeElapsed.Hours, timeElapsed.Minutes);
+				CommonPartsVerifications.IsApproved = true;
+				_context.CommonPartsVerifications.Update(CommonPartsVerifications);
+				await _context.SaveChangesAsync();
+
+				var messageToAdmin = MessageSender2.Messages.ApprovedRequest(Request.RequestCode, CommonPartsVerifications.Approver.FullName);
+				var SendMessageResult = await _messageSender.Send3Async("0536162171", messageToAdmin, null);
+
+				if (!SendMessageResult)
+				{
+					_RequestManagmentService.Rollback(trans);
+					return (false, new string[] { "Failed To send Message" });
+				}
+
+				_RequestManagmentService.Commit(trans);
+
+				return (true, null);
+			}
+			catch (Exception ex)
+			{
+				_RequestManagmentService.Rollback(trans);
+				return (false, new string[] { ex.Message });
+			}
+		}
+
+		public async Task<(bool Succeeded, string[] Errors)> RefuseRequest(ReplyDto acceptRequest)
+		{
+			var trans = await _RequestManagmentService.BeginTransactionAsync();
+
+			try
+			{
+				var Request = await GetByIdAsync(acceptRequest.RequestId);
+				var CommonPartsVerifications = _context.CommonPartsVerifications
+					.Include(r => r.Approver)
+					.FirstOrDefault(r => r.RequestId == acceptRequest.RequestId && r.IsApproved == false);
+
+				if (Request == null || CommonPartsVerifications == null)
+				{
+					return (false, new string[] { "Request Not Found" });
+				}
+
+				var currentDate = DateTime.UtcNow;
+				var dateAfter3Hours = currentDate.AddHours(3);
+
+				var Approve = new RequestManagement()
+				{
+					RequestId = acceptRequest.RequestId,
+					ProcedureType = "رفض تعميد",
+					userId = acceptRequest.userId,
+					CreatedDate = dateAfter3Hours,
+					Notes = acceptRequest.Message,
+					ServiceType = (int)ServiceTypeEnum.ApartmentService
+				};
+
+				var result = await _RequestManagmentService.AddAsync(Approve);
+
+				if (!result.Succeeded)
+				{
+					return (result.Succeeded, result.Errors);
+				}
+
+				Request.RequestStuatus = "مرفوض";
+				var result2 = Update(Request);
+
+				if (!result2.Succeeded)
+				{
+					return (false, result2.Errors);
+				}
+
+				TimeSpan resultDate = (dateAfter3Hours - Request.DateOfVisit);
+				TimeSpan timeElapsed = new TimeSpan(resultDate.Days, resultDate.Hours, resultDate.Minutes, 0);
+				CommonPartsVerifications.TimeElapsed = string.Format("{0}:{1:D2}:{2:D2}", timeElapsed.Days, timeElapsed.Hours, timeElapsed.Minutes);
+				CommonPartsVerifications.IsApproved = false;
+				_context.CommonPartsVerifications.Update(CommonPartsVerifications);
+				await _context.SaveChangesAsync();
+
+				var messageToAdmin = MessageSender2.Messages.RefusedRequest(Request.RequestCode, CommonPartsVerifications.Approver.FullName);
+				var SendMessageResult = await _messageSender.Send3Async("0536162171", messageToAdmin, null);
+
+				if (!SendMessageResult)
+				{
+					_RequestManagmentService.Rollback(trans);
+					return (false, new string[] { "Failed To send Message" });
+				}
+
+				_RequestManagmentService.Commit(trans);
+
+				return (true, null);
+			}
+			catch (Exception ex)
+			{
+				_RequestManagmentService.Rollback(trans);
+				return (false, new string[] { ex.Message });
+			}
+		}
+
+        public async Task<(bool Succeeded, string[] Errors)> Delete(int id)
+        {
+            try
+            {
+                RequestsCommonParts RequestsCommonParts = await GetByIdAsync(id);
+                if (RequestsCommonParts != null)
+                {
+                    _context.RequestCommonParts.Remove(RequestsCommonParts);
+                    await _context.SaveChangesAsync();
+                    return (true, null);
+                }
+                return (false, new string[] { "can`t delete this Reuest" });
+
+            }
+            catch (Exception ex)
+            {
+                return (false, new string[] { "can`t delete this Reuest" });
+            }
+
         }
     }
 }

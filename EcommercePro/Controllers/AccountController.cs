@@ -189,7 +189,7 @@ namespace EcommercePro.Controllers
                     userdb.PhoneNumber = userDto.PhoneNumber;
                     userdb.UserName = userDto.Email;
                     userdb.Image = userDto.Image;
-                    userdb.projectId=userDto.projectId;
+                    userdb.projectId=userDto.projectId!=0 ? userDto.projectId:null;
 
 
                     if (userDto.Password != null)
@@ -431,8 +431,8 @@ namespace EcommercePro.Controllers
             return BadRequest(ModelState);
         }
         [HttpPut("Update/Data/{userId}")]
-        [Authorize]
-        public  async Task<IActionResult> UpdateData(string userId ,[FromForm]RegisterDto userDto)
+        [AllowAnonymous]
+        public async Task<IActionResult> UpdateData(string userId ,[FromForm]RegisterDto userDto)
         {
             if (ModelState.IsValid)
             {
@@ -500,7 +500,7 @@ namespace EcommercePro.Controllers
                     FullName = Customer.ApplicationUser.FullName,
                     Email = Customer.ApplicationUser.Email,
                     PhoneNumber = Customer.ApplicationUser.PhoneNumber,
-                    projectId = Customer.ApplicationUser.projectId,
+                    projectId = Customer.ApplicationUser.projectId!=null? Customer.ApplicationUser.projectId:0,
                     TypeProject = Customer.TypeProject, //مالك - مستأجر
                     City = Customer.City,
                     BulidingName = Customer.BulidingName,
@@ -552,7 +552,7 @@ namespace EcommercePro.Controllers
                     Email = user.Email,
                     PhoneNumber = user.PhoneNumber,
                     Image = user.Image,
-                    projectId=user.projectId,
+                    projectId=user.projectId!=null? user.projectId:0,
                     Job =Roles,
                     confirm=user.EmailConfirmed,
                     Projects =ProjectManagment
@@ -724,6 +724,14 @@ namespace EcommercePro.Controllers
             }
             List<UserBasicInfoDto> Technicians = result.Users;
             return Ok(Technicians);
+        }
+        [HttpGet("projectEmployees/{proId}")]
+        [Authorize(policy: "users.viewClients")]
+        public IActionResult GetEmployeesByProject(int proId)
+        {
+          return Ok(_AcountService.GetEmployeesByProject(proId));
+
+
         }
 
         [HttpGet("Managers")]

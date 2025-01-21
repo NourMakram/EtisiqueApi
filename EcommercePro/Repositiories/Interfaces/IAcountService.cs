@@ -44,6 +44,7 @@ namespace EtisiqueApi.Repositiories.Interfaces
         public (bool Succeeded, string[] Errors) UpadteUserProjects(string UserId, List<int> Projects);
 
         //public List<UserProject> getProjects();
+        public List<UserBasicInfoDto> GetEmployeesByProject(int projectId);
 
     }
 }

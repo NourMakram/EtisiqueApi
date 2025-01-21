@@ -49,39 +49,39 @@ namespace EtisiqueApi.Repositiories
                 Requests = Requests.Where(R => R.Project.ProjectName.Contains(projectName));
              }
 
-            else if (techniciId != null)
+             if (techniciId != null)
             {
                 Requests = Requests.Where(R => R.TechnicianId == techniciId);
             }
-            else if (ClientName != null)
+             if (ClientName != null)
             {
                 Requests = Requests.Where(R => R.ClientName.Contains(ClientName));
 
             }
-            else if (BuildingName != null)
+            if (BuildingName != null)
             {
                 Requests = Requests.Where(R => R.BuildingName == (BuildingName));
 
             }
-            else if (Code != null)
+            if (Code != null)
             {
                 Requests = Requests.Where(R => R.RequestCode.ToString().Contains(Code));
 
             }
-            else if (UnitNo != 0)
+            if (UnitNo != 0)
             {
                 Requests = Requests.Where(R => R.UnitNo == UnitNo);
 
             }
-            else if (ClientPhone != null)
+             if (ClientPhone != null)
             {
                 Requests = Requests.Where(R => R.ClientPhone.Contains(ClientPhone));
             }
-            else if (Stauts != null)
+             if (Stauts != null)
             {
                 Requests = Requests.Where(R => R.RequestStuatus == Stauts);
             }
-            else if(day > 0)
+             if(day > 0)
             {
                 DateOnly currentData = DateOnly.FromDateTime(DateTime.Now);
                 Requests = Requests.Where(R => R.RequestStuatus == "جديد" && DateOnly.FromDateTime(R.CreatedDate) == currentData);
@@ -490,45 +490,66 @@ namespace EtisiqueApi.Repositiories
                 Requests = Requests.Where(R => R.Project.ProjectName.Contains(projectName));
             }
 
-            else if (techniciId != null)
+             if (techniciId != null)
             {
                 Requests = Requests.Where(R => R.TechnicianId == techniciId);
             }
-            else if (ClientName != null)
+             if (ClientName != null)
             {
                 Requests = Requests.Where(R => R.ClientName.Contains(ClientName));
 
             }
-            else if (BuildingName != null)
+             if (BuildingName != null)
             {
                 Requests = Requests.Where(R => R.BuildingName == (BuildingName));
 
             }
-            else if (Code != null)
+             if (Code != null)
             {
                 Requests = Requests.Where(R => R.RequestCode.ToString().Contains(Code));
 
             }
-            else if (UnitNo != 0)
+             if (UnitNo != 0)
             {
                 Requests = Requests.Where(R => R.UnitNo == UnitNo);
 
             }
-            else if (ClientPhone != null)
+             if (ClientPhone != null)
             {
                 Requests = Requests.Where(R => R.ClientPhone.Contains(ClientPhone));
             }
-            else if (Stauts != null)
+             if (Stauts != null)
             {
                 Requests = Requests.Where(R => R.RequestStuatus == Stauts);
             }
-            else if (day > 0)
+             if (day > 0)
             {
                 DateOnly currentData = DateOnly.FromDateTime(DateTime.Now);
                 Requests = Requests.Where(R => R.RequestStuatus == "جديد" && DateOnly.FromDateTime(R.CreatedDate) == currentData);
 
             }
             return Requests;
+        }
+
+        public async Task<(bool Succeeded, string[] Errors)> Delete(int id)
+        {
+            try
+            {
+                KitchenServices KitchenServices = await GetByIdAsync(id);
+                if (KitchenServices != null)
+                {
+                    _context.KitchenServices.Remove(KitchenServices);
+                    await _context.SaveChangesAsync();
+                    return (true, null);
+                }
+                return (false, new string[] { "can`t delete this Reuest" });
+
+            }
+            catch (Exception ex)
+            {
+                return (false, new string[] { "can`t delete this Reuest" });
+            }
+
         }
     }
 }

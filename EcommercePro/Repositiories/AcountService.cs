@@ -543,6 +543,17 @@ namespace EtisiqueApi.Repositiories
 
         }
 
+        public List<UserBasicInfoDto> GetEmployeesByProject(int projectId)
+        {
+          List<UserBasicInfoDto> users=  _context.UserProjects.Include(p=>p.ManageBy).Where(p => p.projectId == projectId).Select(p=>new UserBasicInfoDto()
+          {
+              Id=p.ManageById,
+              Name=p.ManageBy.FullName
+
+          }).ToList();
+            return users;
+        }
+
         //public List<UserProject> getProjects()
         //{
         //    List<UserProject> projects= _context.UserProjects.ToList();

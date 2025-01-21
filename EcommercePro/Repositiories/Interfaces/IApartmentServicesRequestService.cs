@@ -31,5 +31,8 @@ namespace EtisiqueApi.Repositiories.Interfaces
 
         public bool change();
 
+        public Task<(bool Succeeded, string[] Errors)> Delete(int id);
+       
+
     }
 }

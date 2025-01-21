@@ -18,6 +18,7 @@ namespace EcommercePro.Models
          }
 
         public DbSet<Project> Projects { get; set; }
+        public DbSet<ProjectImages> ProjectImages { set; get; }
 		public DbSet<Location> Locations { get; set; }
 		public DbSet<Contract> Contracts { get; set; }
 		public DbSet<Guarantee> Guarantees { get; set; }

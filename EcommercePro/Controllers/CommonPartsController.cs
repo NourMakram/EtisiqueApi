@@ -134,14 +134,14 @@ namespace EtisiqueApi.Controllers
             int TypeServiceId=0, string techniciId=null,
             string ManagerId=null, string BuildingName=null, string Status=null, string Code=null  , bool IsUrget = false,
             int day=0,
-            int week = 0, int year = 0, int month = 0, DateOnly from = default, DateOnly to = default, int Note = 0)
+            int week = 0, int year = 0, int month = 0, DateOnly from = default, DateOnly to = default, int ConfRequest = 0)
         {
 
             List<int> projects = _acountService.GetUserProjects(UserId);
             if(projects.Count()> 0)
             {
-                var requests1 =await _CommonPartsService.GetRequestToProjectsManager(projects, projectName, TypeServiceId, 
-                    techniciId, ManagerId, BuildingName, Status, Code, IsUrget, day,week,year,month,from,to)
+                var requests1 =await _CommonPartsService.GetRequestToProjectsManager(UserId,projects, projectName, TypeServiceId, 
+                    techniciId, ManagerId, BuildingName, Status, Code, IsUrget, day,week,year,month,from,to,ConfRequest)
                     .Select(R => new CommonPartsResponse()
                 {
                     id = R.id,
@@ -159,15 +159,17 @@ namespace EtisiqueApi.Controllers
                     ServiceType = R.ServiceType.Name,
                     UnitNo = R.UnitNo,
                     Type = R.Type == 1 ? "داخل" : "خارج",
-                    ManagerNote=R.ManagerNote
+                    ManagerNote=R.ManagerNote,
+                    ProjectId = R.projectId,
+                    timeElasped = R.TimeElapsed
 
-                })
+                    })
                 .ToPaginatedListAsync(Page, PageSize);
                 return Ok(requests1);
             }
 
             var Requests = await _CommonPartsService.FilterRequestsBy(projectName,TypeServiceId,techniciId,ManagerId,
-                BuildingName,Status,Code,IsUrget, day, week, year, month, from, to)
+                BuildingName,Status,Code,IsUrget, day, week, year, month, from, to,ConfRequest)
                 .Select(R => new CommonPartsResponse()
                 {
                     id = R.id,
@@ -185,8 +187,10 @@ namespace EtisiqueApi.Controllers
                     ServiceType = R.ServiceType.Name,
                     UnitNo = R.UnitNo,
                     Type=R.Type==1 ?"داخل" : "خارج",
-                    ManagerNote = R.ManagerNote
-
+                    ManagerNote = R.ManagerNote,
+                    ProjectId = R.projectId,
+                    timeElasped=R.TimeElapsed
+                    
 
                 })
                 .ToPaginatedListAsync(Page,PageSize);
@@ -209,12 +213,7 @@ namespace EtisiqueApi.Controllers
         [Authorize(policy: "commonPartsRequest.close")]
         public async Task<IActionResult> Close(CommonPartsmanagmentDto closeDto)
         {
-            //if (closeDto.file != null)
-            //{
-            //    var resultt = await _fileService.SaveImage("CommonParts", closeDto.file);
-            //    closeDto.filePath = resultt.imagePath;
-
-            //}
+           
             var result = await _CommonPartsService.Close(closeDto);
             if (!result.Succeeded)
             {
@@ -226,12 +225,7 @@ namespace EtisiqueApi.Controllers
         [Authorize(policy: "commonPartsRequest.PartialClose")]
         public async Task<IActionResult> PartialClose(CommonPartsmanagmentDto partialCloseDto)
         {
-            //if (partialCloseDto.file != null)
-            //{
-            //    var resultt = await _fileService.SaveImage("CommonParts", partialCloseDto.file);
-            //    partialCloseDto.filePath = resultt.imagePath;
-
-            //}
+           
             var result = await _CommonPartsService.PartialClose(partialCloseDto,"اقفال جزئى", "اقفال جزئى");
             if (!result.Succeeded)
             {
@@ -245,12 +239,7 @@ namespace EtisiqueApi.Controllers
         {
             try
             {
-                //if (partialCloseDto1.file != null)
-                //{
-                //    var resultt = await _fileService.SaveImage("CommonParts", partialCloseDto1.file);
-                //    partialCloseDto1.filePath = resultt.imagePath;
-
-                //}
+                
                 var result = await _CommonPartsService.PartialClose(partialCloseDto1, "اقفال اول", "اقفال اول");
                 if (!result.Succeeded)
                 {
@@ -269,12 +258,7 @@ namespace EtisiqueApi.Controllers
         [Authorize(policy: "commonPartsRequest.PartialClose2")]
         public async Task<IActionResult> PartialClose2(CommonPartsmanagmentDto partialCloseDto2)
         {
-            //if (partialCloseDto2.file != null)
-            //{
-            //    var resultt = await _fileService.SaveImage("CommonParts", partialCloseDto2.file);
-            //    partialCloseDto2.filePath = resultt.imagePath;
-
-            //}
+           
             var result = await _CommonPartsService.PartialClose(partialCloseDto2, "اقفال ثانى", "اقفال ثانى");
             if (!result.Succeeded)
             {
@@ -287,12 +271,7 @@ namespace EtisiqueApi.Controllers
         [Authorize(policy: "commonPartsRequest.Refuse")]
         public async Task<IActionResult> Refuse(CloseByNoteDto RefuseData)
         {
-            //if (RefuseData.file != null)
-            //{
-            //    var resultt = await _fileService.SaveImage("CommonParts", RefuseData.file);
-            //    RefuseData.filePath = resultt.imagePath;
-
-            //}
+           
             var result = await _CommonPartsService.Refuse(RefuseData);
             if (!result.Succeeded)
             {
@@ -304,12 +283,7 @@ namespace EtisiqueApi.Controllers
         [Authorize(policy: "commonPartsRequest.Note")]
         public async Task<IActionResult> Note(CloseByNoteDto NoteData)
         {
-            //if (RefuseData.file != null)
-            //{
-            //    var resultt = await _fileService.SaveImage("CommonParts", RefuseData.file);
-            //    RefuseData.filePath = resultt.imagePath;
-
-            //}
+            
             var result = await _CommonPartsService.Note(NoteData);
             if (!result.Succeeded)
             {
@@ -322,12 +296,7 @@ namespace EtisiqueApi.Controllers
         [Authorize(policy: "commonPartsRequest.Confirm")]
         public async Task<IActionResult> Confirm(StartDto ConfirmData)
         {
-            //if (RefuseData.file != null)
-            //{
-            //    var resultt = await _fileService.SaveImage("CommonParts", RefuseData.file);
-            //    RefuseData.filePath = resultt.imagePath;
-
-            //}
+            
             var result = await _CommonPartsService.Confirm(ConfirmData);
             if (!result.Succeeded)
             {
@@ -339,12 +308,7 @@ namespace EtisiqueApi.Controllers
         [Authorize(policy: "commonPartsRequest.Up")]
         public async Task<IActionResult> Up(CommonPartsmanagmentDto UpData)
         {
-            //if (UpData.file != null)
-            //{
-            //    var resultt = await _fileService.SaveImage("CommonParts", UpData.file);
-            //    UpData.filePath = resultt.imagePath;
-
-            //}
+            
             var result = await _CommonPartsService.Up(UpData);
             if (!result.Succeeded)
             {
@@ -356,12 +320,7 @@ namespace EtisiqueApi.Controllers
         [Authorize(policy: "commonPartsRequest.Comment")]
         public async Task<IActionResult> Comment(CommonPartsmanagmentDto partialCloseDto)
         {
-            //if (partialCloseDto.file != null)
-            //{
-            //    var resultt = await _fileService.SaveImage("CommonParts", partialCloseDto.file);
-            //    partialCloseDto.filePath = resultt.imagePath;
-
-            //}
+           
             var result = await _CommonPartsService.Comment(partialCloseDto);
             if (!result.Succeeded)
             {
@@ -446,14 +405,62 @@ namespace EtisiqueApi.Controllers
                    Position = R.Position,
                    ServiceType = R.ServiceType.Name,
                    UnitNo = R.UnitNo,
-                   Type = R.Type == 1 ? "داخل" : "خارج"
+                   Type = R.Type == 1 ? "داخل" : "خارج",
+                   ProjectId = R.projectId
+
                })
               .ToPaginatedListAsync(page, pageSize);
 
             return Ok(Requests);
         }
 
-        
+		[HttpPost("Approve")]
+		[Authorize(policy: "commonPartsRequest.transfer2")]
+		public async Task<IActionResult> Approve(ApproveRequestDto ApproveRequestDto)
+		{
+			var result = await _CommonPartsService.ApproveRequestMethod2(ApproveRequestDto);
+			if (!result.Succeeded)
+			{
+				return BadRequest(result.Errors);
+			}
+			return Ok();
+		}
+		[HttpPost("AcceptBaptism")]
+		[Authorize(policy: "commonPartsRequest.AcceptBaptism")]
+		public async Task<IActionResult> Accept(ReplyDto AcceptRequestDto)
+		{
+			var result = await _CommonPartsService.AcceptRequest(AcceptRequestDto);
+			if (!result.Succeeded)
+			{
+				return BadRequest(result.Errors);
+			}
+			return Ok();
+		}
+		[HttpPost("RefuseBaptism")]
+		[Authorize(policy: "commonPartsRequest.RefuseBaptism")]
+		public async Task<IActionResult> Refuse(ReplyDto RefuseRequestDto)
+		{
+			var result = await _CommonPartsService.RefuseRequest(RefuseRequestDto);
+			if (!result.Succeeded)
+			{
+				return BadRequest(result.Errors);
+			}
+			return Ok();
+		}
+
+        [HttpDelete]
+        [Authorize(policy: "commonPartsRequest.Delete")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _CommonPartsService.Delete(id);
+            if (result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+            return Ok();
+        }
+
+
     }
 
 

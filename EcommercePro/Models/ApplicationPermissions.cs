@@ -63,12 +63,13 @@ namespace EcommercePro.Models
         public static ApplicationPermission DelayMaintenanceRequests = new ApplicationPermission("تأجيل", "maintenanceRequests.Delay", MaintenanceRequestsGroupName, "");
         public static ApplicationPermission ReplyMaintenanceRequests = new ApplicationPermission("رد", "maintenanceRequests.Reply", MaintenanceRequestsGroupName, "");
         public static ApplicationPermission StartMaintenanceRequests = new ApplicationPermission("بدء", "maintenanceRequests.Start", MaintenanceRequestsGroupName, "");
+        public static ApplicationPermission DeleteMaintenanceRequests = new ApplicationPermission("حذف", "maintenanceRequests.Delete", MaintenanceRequestsGroupName, "");
         public static ApplicationPermission ApproveMaintenanceRequests = new ApplicationPermission("تحويل تعميد", "maintenanceRequests.Transfer2", MaintenanceRequestsGroupName, "");
         public static ApplicationPermission AcceptMaintenanceRequests = new ApplicationPermission("قبول تعميد", "maintenanceRequests.Accept", MaintenanceRequestsGroupName, "");
         public static ApplicationPermission RefuseMaintenanceRequests = new ApplicationPermission("رفض تعميد", "maintenanceRequests.Refuse", MaintenanceRequestsGroupName, "");
         public static ApplicationPermission ClientsMaintenanceRequests = new ApplicationPermission("طلبات العميل", "maintenanceRequests.Clients", MaintenanceRequestsGroupName, "");
         public static ApplicationPermission TechniciansMaintenanceRequests = new ApplicationPermission("طلبات الفنى", "maintenanceRequests.Technicians", MaintenanceRequestsGroupName, "");
-
+        
         #endregion
 
         #region EmergencyRequests requests 
@@ -82,6 +83,7 @@ namespace EcommercePro.Models
         public static ApplicationPermission CloseEmergencyRequests = new ApplicationPermission("اغلاق", "EmergencyRequests.close", EmergencyRequestsGroupName, "");
          public static ApplicationPermission ReplyEmergencyRequests = new ApplicationPermission("رد", "EmergencyRequests.Reply", EmergencyRequestsGroupName, "");
         public static ApplicationPermission StartEmergencyRequests = new ApplicationPermission("بدء", "EmergencyRequests.Start", EmergencyRequestsGroupName, "");
+        public static ApplicationPermission DeleteEmergencyRequests = new ApplicationPermission("حذف", "EmergencyRequests.Delete", EmergencyRequestsGroupName, "");
         public static ApplicationPermission ClientsEmergencyRequests = new ApplicationPermission("طلبات العميل", "EmergencyRequests.Clients", EmergencyRequestsGroupName, "");
         public static ApplicationPermission TechniciansEmergencyRequests = new ApplicationPermission("طلبات الفنى", "EmergencyRequests.Technicians", EmergencyRequestsGroupName, "");
         // public static ApplicationPermission ProjectManagerMaintenanceRequests = new ApplicationPermission("طلبات مدير مشروع", "maintenanceRequests.projectManager", MaintenanceRequestsGroupName, "");
@@ -100,19 +102,21 @@ namespace EcommercePro.Models
         public static ApplicationPermission PartialClose1CommonPartsrequest = new ApplicationPermission("اقفال اول", "commonPartsRequest.PartialClose1", CommonPartsrequestsGroupName, "");
         public static ApplicationPermission PartialClose2CommonPartsrequest = new ApplicationPermission("اقفال ثانى", "commonPartsRequest.PartialClose2", CommonPartsrequestsGroupName, "");
         public static ApplicationPermission NoteCommonPartsrequest = new ApplicationPermission("ملاحظات", "commonPartsRequest.Note", CommonPartsrequestsGroupName, "");
-
+		public static ApplicationPermission ApproveCommonPartsrequest = new ApplicationPermission("تعميد", "commonPartsRequest.transfer2", CommonPartsrequestsGroupName, "");
+		public static ApplicationPermission AcceptBaptismCommonPartsrequest = new ApplicationPermission("قبول تعميد", "commonPartsRequest.AcceptBaptism", CommonPartsrequestsGroupName, "");
+		public static ApplicationPermission RefuseBaptismCommonPartsrequest = new ApplicationPermission("رفض تعميد", "commonPartsRequest.RefuseBaptism", CommonPartsrequestsGroupName, "");
+        public static ApplicationPermission DeleteCommonPartsrequest = new ApplicationPermission("حذف", "commonPartsRequest.Delete", CommonPartsrequestsGroupName, "");
         public static ApplicationPermission UpCommonPartsrequest = new ApplicationPermission("تصعيد", "commonPartsRequest.Up", CommonPartsrequestsGroupName, "");
-        public static ApplicationPermission  confirmCommonPartsrequest = new ApplicationPermission("اعتماد", "commonPartsRequest.Confirm", CommonPartsrequestsGroupName, "");
+        public static ApplicationPermission confirmCommonPartsrequest = new ApplicationPermission("اعتماد", "commonPartsRequest.Confirm", CommonPartsrequestsGroupName, "");
         public static ApplicationPermission refuseCommonPartsrequest = new ApplicationPermission("رفض", "commonPartsRequest.Refuse", CommonPartsrequestsGroupName, "");
         public static ApplicationPermission TechnicianCommonPartsrequest = new ApplicationPermission("طلبات الفنى", "commonPartsRequest.Technician", CommonPartsrequestsGroupName, "");
         public static ApplicationPermission ManagerCommonPartsrequest = new ApplicationPermission("طلبات المشرف", "commonPartsRequest.Manager", CommonPartsrequestsGroupName, "");
-       // public static ApplicationPermission ProjectManagerCommonPartsrequest = new ApplicationPermission("طلبات مدير مشروع", "commonPartsRequest.projectManager", CommonPartsrequestsGroupName, "");
-
+ 
         #endregion
 
         #region KitchenServicesrequests 
         public const string KitchenServicesGroupName = "صلاحيات  خدمات المطابخ ";
-         public static ApplicationPermission ViewAllKitchenServicesrequests = new ApplicationPermission("عرض جميع الطلبات", "KitchenServices.view", KitchenServicesGroupName, "");
+        public static ApplicationPermission ViewAllKitchenServicesrequests = new ApplicationPermission("عرض جميع الطلبات", "KitchenServices.view", KitchenServicesGroupName, "");
         public static ApplicationPermission AddKitchenServicesrequest = new ApplicationPermission("اضافة", "KitchenServices.Add", KitchenServicesGroupName, "");
         public static ApplicationPermission ShowKitchenServicesrequest = new ApplicationPermission("عرض", "KitchenServices.Show", KitchenServicesGroupName, "");
         public static ApplicationPermission TransferKitchenServicesrequest = new ApplicationPermission("تحويل", "KitchenServices.transfer", KitchenServicesGroupName, "");
@@ -120,7 +124,7 @@ namespace EcommercePro.Models
         public static ApplicationPermission StartKitchenServicesrequest = new ApplicationPermission("بدء", "KitchenServices.Start", KitchenServicesGroupName, "");
         public static ApplicationPermission RepleyKitchenServicesrequest = new ApplicationPermission("رد", "KitchenServices.Repley", KitchenServicesGroupName, "");
         public static ApplicationPermission CloseByCodeKitchenServicesrequest = new ApplicationPermission("اغلاق", "KitchenServices.CloseM1", KitchenServicesGroupName, "");
-        //public static ApplicationPermission CloseByNoteKitchenServicesrequest = new ApplicationPermission("CloseByNote", "KitchenServices.CloseM2", KitchenServicesGroupName, "");
+        public static ApplicationPermission DeleteKitchenServicesrequest = new ApplicationPermission("حذف", "KitchenServices.Delete", KitchenServicesGroupName, "");
         public static ApplicationPermission TechnicianKitchenServicesrequest = new ApplicationPermission("طلبات الفنى", "KitchenServices.Technician", KitchenServicesGroupName, "");
         public static ApplicationPermission ClientKitchenServicesrequest = new ApplicationPermission("طلبات العميل", "KitchenServices.Client", KitchenServicesGroupName, "");
         public static ApplicationPermission AgreemantKitchenServicesrequest = new ApplicationPermission("اضافة ملف الأتفاقية", "KitchenServices.Agreemant", KitchenServicesGroupName, "");
@@ -135,6 +139,7 @@ namespace EcommercePro.Models
         public static ApplicationPermission QuestionnairesAddNote = new ApplicationPermission("اضافة ملاحظات", "Questionnaires.Add", QuestionnaireGroupName, "");
         public static ApplicationPermission QuestionnairesServiceView = new ApplicationPermission("عرض تقييمات الخدمات", "Questionnaires.ServicesView", QuestionnaireGroupName, "");
         public static ApplicationPermission QuestionnairesTechnicianView = new ApplicationPermission("عرض تقييمات الفنيين", "Questionnaires.TechniciansView", QuestionnaireGroupName, "");
+        public static ApplicationPermission QuestionnairesTechnicianDelete = new ApplicationPermission("حذف تقييم", "Questionnaires.Delete", QuestionnaireGroupName, "");
 
         #endregion
 

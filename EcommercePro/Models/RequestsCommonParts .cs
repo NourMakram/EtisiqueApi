@@ -55,7 +55,8 @@ namespace EtisiqueApi.Models
         public string? ManagerNote { set; get; }
 
         public CommonPartsVerifications? CommonPartsVerifications { set; get; }
- 
 
-    }
+		public bool IsConfirmation { get; set; } = false;
+
+	}
 }
