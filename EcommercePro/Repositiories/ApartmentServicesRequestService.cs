@@ -190,6 +190,7 @@ namespace EtisiqueApi.Repositiories
                         Latitude = R.Location.Latitude,
                         Longitude = R.Location.Longitude,
                         CloseCode = R.CloseCode,
+                        ProjectId=R.projectId
                         
                     }).AsQueryable(); ;
 

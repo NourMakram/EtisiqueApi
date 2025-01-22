@@ -516,9 +516,21 @@ namespace EtisiqueApi.Repositiories
             try
             {
                 IQueryable<UserProject> CurrentuserProjects = _context.UserProjects.Where(p => p.ManageById == UserId);
-                _context.UserProjects.RemoveRange(CurrentuserProjects);
-                //_context.SaveChanges();
+                
+                if(Projects==null && CurrentuserProjects==null)
+                {
+                    return (true, null);
 
+                }
+                else if(Projects==null && CurrentuserProjects.Count() > 0)
+                {
+                    _context.UserProjects.RemoveRange(CurrentuserProjects);
+                    _context.SaveChanges();
+                    return (true, null);
+
+                }
+                _context.UserProjects.RemoveRange(CurrentuserProjects);
+ 
                 List<UserProject> userProjects = new List<UserProject>();
                 foreach (var project in Projects)
                 {
@@ -542,10 +554,12 @@ namespace EtisiqueApi.Repositiories
 
 
         }
+        
 
         public List<UserBasicInfoDto> GetEmployeesByProject(int projectId)
         {
-          List<UserBasicInfoDto> users=  _context.UserProjects.Include(p=>p.ManageBy).Where(p => p.projectId == projectId).Select(p=>new UserBasicInfoDto()
+          List<UserBasicInfoDto> users=  _context.UserProjects.Include(p=>p.ManageBy).Where(p => p.projectId == projectId)
+                .Select(p=>new UserBasicInfoDto()
           {
               Id=p.ManageById,
               Name=p.ManageBy.FullName

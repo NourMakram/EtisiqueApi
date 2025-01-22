@@ -208,15 +208,15 @@ namespace EcommercePro.Controllers
                         return BadRequest(result.Errors);
                     }
 
-                    if(userDto.Projects!=null && userDto.Projects.Count() > 0)
-                    {
+                    //if(userDto.Projects!=null && userDto.Projects.Count() > 0)
+                    //{
                         var result1 = _AcountService.UpadteUserProjects(userdb.Id, userDto.Projects);
                         if (!result1.Succeeded)
                         {
                             return BadRequest(result1.Errors);
                         }
 
-                    }
+                    //}
 
                     
                     var resultData = await _AcountService.UpdateUserRolesAsync(userdb,userDto.Job );

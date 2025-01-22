@@ -972,7 +972,7 @@ namespace EtisiqueApi.Repositiories
 					userId = acceptRequest.userId,
 					CreatedDate = dateAfter3Hours,
 					Notes = acceptRequest.Message,
-					ServiceType = (int)ServiceTypeEnum.ApartmentService
+					ServiceType = (int)ServiceTypeEnum.CommonParts
 				};
 
 				var result = await _RequestManagmentService.AddAsync(Approve);
