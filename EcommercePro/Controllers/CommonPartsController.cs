@@ -453,12 +453,25 @@ namespace EtisiqueApi.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _CommonPartsService.Delete(id);
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
                 return BadRequest(result.Errors);
             }
             return Ok();
         }
+
+        //[HttpGet("Change")]
+        //[AllowAnonymous]
+        //public async Task<IActionResult> change()
+        //{
+        //    var result = await _CommonPartsService.ChangeData();
+        //    if (result.Succeeded == true)
+        //    {
+        //        return Ok();
+        //    }
+        //    return BadRequest();
+        //}
+
 
 
     }

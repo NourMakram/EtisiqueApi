@@ -729,7 +729,7 @@ namespace EtisiqueApi.Repositiories
                 }
                 var Message = MessageSender2.Messages.Up(Request.RequestCode.ToString());
 
-                var SendMessageResult1 = await _messageSender.Send3Async("0542999881", Message, null);
+                var SendMessageResult1 = await _messageSender.Send3Async("0536162171", Message, null);
                 if (!SendMessageResult1)
                 {
                     return (false, null);
@@ -1037,5 +1037,19 @@ namespace EtisiqueApi.Repositiories
             }
 
         }
+        public async Task<(bool Succeeded, string[] Errors)> ChangeData()
+        {
+            IQueryable<RequestsCommonParts> commonParts = _context.RequestCommonParts.Where(R => R.RequestStuatus == "اقفال جزئى");
+            foreach (RequestsCommonParts commonParts1 in commonParts)
+            {
+                commonParts1.RequestStuatus = "اقفال اول";
+            }
+            _context.RequestCommonParts.UpdateRange(commonParts);
+           await  _context.SaveChangesAsync();
+
+            return (true,null);
+
+        }
+
     }
 }

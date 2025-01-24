@@ -211,7 +211,7 @@ namespace EtisiqueApi.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _emergencyService.Delete(id);
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
                 return BadRequest(result.Errors);
             }

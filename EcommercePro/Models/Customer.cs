@@ -31,5 +31,7 @@ namespace EtisiqueApi.Models
 		public bool IsReceived { get; set; } = false;
 		public string? ReceivedCode { get; set; }
 		public DateTime? ReceivedDate { set; get; }
+
+
     }
 }

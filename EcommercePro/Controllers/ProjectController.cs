@@ -224,7 +224,8 @@ namespace EtisiqueApi.Controllers
         }
        
 		[HttpGet("Project/{projectId}")]
-        [Authorize(policy: "projects.view")]
+		[Authorize]
+       // [Authorize(policy: "projects.view")]
  		public async Task<IActionResult> GetProject(int projectId)
 		{
             Project projectDb = await _projectService.GetByIdByInclude(projectId);
