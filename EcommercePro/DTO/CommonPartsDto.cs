@@ -29,9 +29,8 @@ namespace EtisiqueApi.DTO
 
         public bool IsUrgent { set; get; } = false;
 
-        //[ForeignKey("Location")]
-        //public int RequestLocationId { set; get; }
-        //public Location? Location { set; get; }
+        public bool IsCleaning { get; set; } = false;
+
 
         [Required(ErrorMessage = "Description is Required")]
         public string Description { set; get; }

@@ -95,9 +95,22 @@ namespace EtisiqueApi.DTO
         public string BuildingName { get; set; }
         public int UnitNum { get; set; }
         public string project { set; get; }
+        public string userId { set; get; }
         public string ReceivedCode { set; get; }
         public string ReceivedDate { set; get; }
+        public DateOnly? GuaranteeStart { set; get; }
+        public DateOnly? GuaranteeEnd { set; get; }
 
+
+    }
+    public class UnitsManagmentDto
+    {
+        [Required]
+        public int id { set; get; }
+        [Required]
+        public DateOnly start { set; get; }
+        [Required]
+        public DateOnly end { set; get; }
 
     }
 }

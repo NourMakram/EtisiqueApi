@@ -146,7 +146,6 @@ namespace EtisiqueApi.Controllers
 
 		[HttpDelete("SoftDelete/{projectId:int}")]
         [Authorize(policy: "projects.manage")]
- 
         public async Task<IActionResult> SoftDelete(int projectId)
 		{
 			Project projectDb = await _projectService.GetByIdAsync(projectId);
@@ -250,6 +249,7 @@ namespace EtisiqueApi.Controllers
                 Address = projectDb.Address,
                 Description = projectDb.Description,
 				images=projectDb.ProjectImages.Select(i=>i.imagePath).ToList(),
+				hasGuarantee=projectDb.hasGuarantee
             });
         }
 

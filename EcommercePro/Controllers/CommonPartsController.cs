@@ -43,12 +43,7 @@ namespace EtisiqueApi.Controllers
    
                 try
                 {
-                    //if (commonParts.RequestFile != null)
-                    //{
-                    //    var resultt = await _fileService.SaveImage("CommonParts", commonParts.RequestFile);
-                    //    commonParts.RequestImage = resultt.imagePath;
-
-                    //}
+                    
                     RequestsCommonParts lastOrder = _CommonPartsService.LastOrder();
                     int RequestCode = 1100;
 
@@ -77,8 +72,8 @@ namespace EtisiqueApi.Controllers
                         Position=commonParts.Position,
                         projectId=commonParts.projectId,
                         ServiceTypeId=commonParts.ServiceTypeId,
-                        
-                        UpdatedDate= dateAfter3Hours
+                        UpdatedDate= dateAfter3Hours,
+                        IsCleaning=commonParts.IsCleaning
 
                     };
 

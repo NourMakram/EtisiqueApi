@@ -55,9 +55,11 @@ namespace EtisiqueApi.DTO
         public string? UpdatedDate { get; set; }
         public string ProjectStatus { get; set; }   // 1 on ,  2  off
 		public List<string> images { set; get; }
+        public bool hasGuarantee { set; get; }
+
 
     }
-	public class projectList()
+    public class projectList()
 	{
 		public int id { set; get; }
 		public string name { set; get; }

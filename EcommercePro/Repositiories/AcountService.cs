@@ -517,7 +517,7 @@ namespace EtisiqueApi.Repositiories
             {
                 IQueryable<UserProject> CurrentuserProjects = _context.UserProjects.Where(p => p.ManageById == UserId);
                 
-                if(Projects==null && CurrentuserProjects==null)
+                if(Projects==null && CurrentuserProjects.IsNullOrEmpty())
                 {
                     return (true, null);
 

@@ -760,10 +760,7 @@ namespace EtisiqueApi.Repositiories
 			try
 			{
 				var Request = await GetByIdAsync(approveRequest.RequestId);
-				var CommonPartsVerifications = _context.CommonPartsVerifications
-					.Include(r => r.Approver)
-					.FirstOrDefault(r => r.RequestId == approveRequest.RequestId && r.IsApproved == false);
-
+				
 				if (Request == null)
 				{
 					return (false, new string[] { "Request Not Found" });
@@ -804,6 +801,9 @@ namespace EtisiqueApi.Repositiories
 				{
 					return (false, result2.Errors);
 				}
+                var CommonPartsVerifications = _context.CommonPartsVerifications
+                    .Include(r => r.Approver)
+                    .FirstOrDefault(r => r.RequestId == approveRequest.RequestId && r.IsApproved == false);
 
                 var messageToApprover = MessageSender2.Messages.ApproveRequest(Request.RequestCode);
                 var SendMessageResult = await _messageSender.Send3Async(CommonPartsVerifications.Approver.PhoneNumber, messageToApprover, null);

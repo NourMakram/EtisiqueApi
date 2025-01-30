@@ -10,11 +10,11 @@ namespace EtisiqueApi.Repositiories
     {
         private readonly DbSet<Customer> _Customer;
         private MessageSender2.IMessageSender _MessageService;
-        public CustomerService(Context context, MessageSender2.IMessageSender MessageService) : base(context)
+         public CustomerService(Context context, MessageSender2.IMessageSender MessageService) : base(context)
         {
             _Customer = context.Set<Customer>();
             _MessageService = MessageService;
-        }
+         }
       
         public async Task<(bool Succeeded, string[] Errors) >Update(string userId,RegisterDto Entirty)
         {
@@ -200,6 +200,94 @@ namespace EtisiqueApi.Repositiories
             return (result.Succeeded, result.Errors);
             
 
+        }
+
+        public IQueryable<Client> UnitsManagement(int projectId, string buidingName, string ClientName,
+            string ClientPhone,DateOnly from , DateOnly to)
+        {
+            var results = _Customer.Include(C => C.ApplicationUser)
+                 .ThenInclude(C => C.Project)
+                 .OrderByDescending(C => C.Id)
+                 .Where(c => c.ApplicationUser.projectId == projectId && c.ApplicationUser.IsDeleted==false);
+
+           
+            if (buidingName != null)
+            {
+                results = results.Where(c => c.BulidingName == buidingName);
+            }
+            if (ClientName != null)
+            {
+                results = results.Where(c => c.ApplicationUser.FullName.Contains(ClientName));
+            }
+            if (ClientPhone != null)
+            {
+                results = results.Where(c => c.ApplicationUser.PhoneNumber.Contains(ClientPhone));
+            }
+            if (from != default)
+            {
+                results = results.Where(c => DateOnly.FromDateTime((DateTime)c.ReceivedDate) >= from);
+
+            }
+            if (to != default)
+            {
+                results = results.Where(c => DateOnly.FromDateTime((DateTime)c.ReceivedDate) >= from && DateOnly.FromDateTime((DateTime)c.ReceivedDate) <= to);
+
+            }
+            //if (reciveDate != default)
+            //{
+            //    results = results.Where(c => DateOnly.FromDateTime((DateTime)c.ReceivedDate) == reciveDate);
+
+            //}
+            return results.
+                Select(c => new Client()
+                {
+                    Id=c.Id.ToString(),
+                    userId = c.UserId,
+                    FullName = c.ApplicationUser.FullName,
+                    Email = c.ApplicationUser.Email,
+                    phoneNumber = c.ApplicationUser.PhoneNumber,
+                    UnitNum = c.UnitNo,
+                    BuildingName = c.BulidingName,
+                    GuaranteeStart=c.GuaranteeStart,
+                    GuaranteeEnd=c.GuaranteeEnd,
+                    project = c.ApplicationUser.Project.ProjectName,
+                    ReceivedDate = c.ReceivedDate != null ? c.ReceivedDate.Value.ToString("dd-MM-yyyy hh:mm tt") : "No date available"
+                   
+
+                }).AsQueryable();
+        }
+
+        public bool IsGuaranteeAvailable(string userId, int projectId, int unitNo, string buidingName)
+        {
+            DateOnly now = DateOnly.FromDateTime(DateTime.UtcNow);
+           bool resut = _Customer
+                       .Include(C => C.ApplicationUser)
+                       .ThenInclude(C => C.Project)
+                       .Any(R => R.UserId == userId && R.ApplicationUser.projectId == projectId && R.UnitNo == unitNo && R.BulidingName == buidingName && R.GuaranteeEnd >= now);
+            return resut;
+        
+        }
+
+        public async Task<(bool Succeeded, string[] Errors)> UpdateUnitsManagement(UnitsManagmentDto unitsManagment)
+        {
+            try
+            {
+                Customer userUnit = await _Customer.FirstOrDefaultAsync(c => c.Id == unitsManagment.id);
+                if (userUnit == null) {
+                    return (false,new string[] { "Not found" });
+                }
+                userUnit.GuaranteeStart = unitsManagment.start;
+                userUnit.GuaranteeEnd = unitsManagment.end;
+                var result = base.Update(userUnit);
+
+                return (result.Succeeded, result.Errors);
+
+            }
+            catch(Exception ex)
+            {
+                return (false, new string[] { ex.Message });
+
+            }
         }
     }
 }

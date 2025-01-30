@@ -37,9 +37,6 @@ namespace EtisiqueApi.Models
         public DateTime DateOfVisit { set; get; }
 
          public string? TimeElapsed { set; get; }
-       // public int NumDays { set; get; } = 0;
-
-
         public List<RequestsImages>? images { set; get; }    
 
         public string? RequestImage { set; get; }
@@ -57,6 +54,9 @@ namespace EtisiqueApi.Models
         public CommonPartsVerifications? CommonPartsVerifications { set; get; }
 
 		public bool IsConfirmation { get; set; } = false;
+
+        public bool IsCleaning { get; set; } = false;
+
 
 	}
 }

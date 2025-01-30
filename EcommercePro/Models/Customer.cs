@@ -20,7 +20,11 @@ namespace EtisiqueApi.Models
 		[Required(ErrorMessage = "UnitNo is Required")]
 		public int UnitNo { get; set; }
 
-		public List<Location>? Locations { set; get; }
+        [ForeignKey("Project")]
+        public int? projectId { set; get; }
+        public Project? Project { set; get; }
+
+        public List<Location>? Locations { set; get; }
 
 		[ForeignKey("ApplicationUser")]
 		[Required(ErrorMessage ="userid is Required")]
@@ -28,9 +32,16 @@ namespace EtisiqueApi.Models
 
 		public ApplicationUser? ApplicationUser { get; set; }
 
+
 		public bool IsReceived { get; set; } = false;
 		public string? ReceivedCode { get; set; }
 		public DateTime? ReceivedDate { set; get; }
+		public DateOnly? GuaranteeStart { set; get; }
+        public DateOnly? GuaranteeEnd { set; get; }
+	
+
+
+
 
 
     }

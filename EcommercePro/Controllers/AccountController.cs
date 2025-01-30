@@ -6,17 +6,12 @@ using EtisiqueApi.Pagination;
 using EtisiqueApi.Repositiories;
 using EtisiqueApi.Repositiories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
- using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
-
+ 
 namespace EcommercePro.Controllers
 {
 	[Route("api/[controller]")]
@@ -58,6 +53,9 @@ namespace EcommercePro.Controllers
                     //genetate Code
                     Random generator = new Random();
                     string Code = generator.Next(0, 100000).ToString("D6");
+                    var currentDate = DateTime.UtcNow;
+                    // Increase the hour by 3
+                    var dateAfter3Hours = currentDate.AddHours(3);
                     if (userDto.formFile != null)
                     {
                       var Result = await _fileService.SaveImage("Users",userDto.formFile);
@@ -97,7 +95,8 @@ namespace EcommercePro.Controllers
                             UnitNo = (int)userDto.UnitNo,
                             City = userDto.City,
                             UserId = user.Id,
-
+                            projectId=userDto.projectId,
+                            ReceivedDate=currentDate
                         };
                         var Result3 = await _customerService.AddAsync(customer);
                         if (!Result3.Succeeded)

@@ -15,6 +15,10 @@ namespace EtisiqueApi.Repositiories.Interfaces
 
         public  Task<Client> GetClientReservation(string UserId);
         public IQueryable<Client> ClientsReservation(string projectName = null, string buildingName = null, string ClientName = null, string ClientPhone = null, DateOnly from = default, DateOnly to = default);
+        public IQueryable<Client> UnitsManagement(int projectId, string buidingName, string ClientName,
+            string ClientPhone, DateOnly from, DateOnly to);
+        public bool IsGuaranteeAvailable(string userId, int projectId, int unitNo, string buidingName);
+        public Task<(bool Succeeded, string[] Errors)> UpdateUnitsManagement(UnitsManagmentDto unitsManagment);
 
 
     }
