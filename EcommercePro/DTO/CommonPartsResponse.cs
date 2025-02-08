@@ -48,7 +48,7 @@ namespace EtisiqueApi.DTO
         public int ProjectId { set; get; }
 
         public string timeElasped { set; get; }
-
+        public bool IsCleaning { get; set; }
 
     }
 }

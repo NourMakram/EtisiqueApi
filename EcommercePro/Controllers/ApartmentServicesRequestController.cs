@@ -102,6 +102,8 @@ namespace EtisiqueApi.Controllers
 
                     // Increase the hour by 3
                     var dateAfter3Hours = currentDate.AddHours(3);
+                    apartmentService.DateOfVisit = apartmentService.DateOfVisit.AddHours(dateAfter3Hours.Hour);
+                    apartmentService.DateOfVisit = apartmentService.DateOfVisit.AddMinutes(dateAfter3Hours.Minute);
 
                     ApartmentServicesRequest Request = new ApartmentServicesRequest()
                     {
@@ -205,12 +207,12 @@ namespace EtisiqueApi.Controllers
             return Ok(Request);
         }
         [HttpGet("filter/{Page}/{PageSize}")]
-        [Authorize(policy:"maintenanceRequests.view")]
+        [Authorize(policy: "maintenanceRequests.view")]
         public async Task<IActionResult> FitlertGetRequests(string UserId, bool hasGuarantee, int Page = 1, int PageSize = 10, string projectName = null,
-            int TypeServiceId = 0,string techniciId = null, string ClientName = null,int ConfRequest=0,
-            string BuldingName = null, int UnitNo = 0, string ClientPhone = null, string Status = null, string Code = null, int day=0
-            ,int week = 0, int year = 0, int month = 0, DateOnly from = default, DateOnly to = default)
-        
+            int TypeServiceId = 0, string techniciId = null, string ClientName = null, int ConfRequest = 0,
+            string BuldingName = null, int UnitNo = 0, string ClientPhone = null, string Status = null, string Code = null, int day = 0
+            , int week = 0, int year = 0, int month = 0, DateOnly from = default, DateOnly to = default)
+
          {
             List<int> Projects = _acountService.GetUserProjects(UserId);
             if(Projects.Count() > 0)

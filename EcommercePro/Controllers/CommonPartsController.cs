@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Drawing.Printing;
+using System.Globalization;
 using static EcommercePro.Models.Constants;
 
 namespace EtisiqueApi.Controllers
@@ -44,7 +45,7 @@ namespace EtisiqueApi.Controllers
                 try
                 {
                     
-                    RequestsCommonParts lastOrder = _CommonPartsService.LastOrder();
+                    RequestsCommonParts lastOrder = _CommonPartsService.LastOrder(commonParts.IsCleaning);
                     int RequestCode = 1100;
 
                     if (lastOrder != null)
@@ -57,6 +58,10 @@ namespace EtisiqueApi.Controllers
 
                     // Increase the hour by 3
                     var dateAfter3Hours = currentDate.AddHours(3);
+
+                    commonParts.DateOfVisit = commonParts.DateOfVisit.AddHours(dateAfter3Hours.Hour);
+                    commonParts.DateOfVisit = commonParts.DateOfVisit.AddMinutes(dateAfter3Hours.Minute);
+
                     RequestsCommonParts Request = new RequestsCommonParts()
                     {
                         RequestCode = RequestCode,
@@ -125,7 +130,7 @@ namespace EtisiqueApi.Controllers
         }
         [HttpGet("{Page}/{PageSize}")]
         [Authorize(policy: "commonPartsRequest.view")]
-        public async Task<IActionResult> Requests(string UserId,int Page=1, int PageSize=5,string projectName=null,
+        public async Task<IActionResult> Requests(string UserId, bool iscleaning,int Page=1, int PageSize=5,string projectName=null,
             int TypeServiceId=0, string techniciId=null,
             string ManagerId=null, string BuildingName=null, string Status=null, string Code=null  , bool IsUrget = false,
             int day=0,
@@ -135,7 +140,7 @@ namespace EtisiqueApi.Controllers
             List<int> projects = _acountService.GetUserProjects(UserId);
             if(projects.Count()> 0)
             {
-                var requests1 =await _CommonPartsService.GetRequestToProjectsManager(UserId,projects, projectName, TypeServiceId, 
+                var requests1 =await _CommonPartsService.GetRequestToProjectsManager(UserId,projects,iscleaning, projectName, TypeServiceId, 
                     techniciId, ManagerId, BuildingName, Status, Code, IsUrget, day,week,year,month,from,to,ConfRequest)
                     .Select(R => new CommonPartsResponse()
                 {
@@ -163,7 +168,7 @@ namespace EtisiqueApi.Controllers
                 return Ok(requests1);
             }
 
-            var Requests = await _CommonPartsService.FilterRequestsBy(projectName,TypeServiceId,techniciId,ManagerId,
+            var Requests = await _CommonPartsService.FilterRequestsBy(iscleaning,projectName,TypeServiceId,techniciId,ManagerId,
                 BuildingName,Status,Code,IsUrget, day, week, year, month, from, to,ConfRequest)
                 .Select(R => new CommonPartsResponse()
                 {
@@ -346,10 +351,10 @@ namespace EtisiqueApi.Controllers
 
         [HttpGet("Techincan/{techinchId}/{page}/{PageSize}")]
         [Authorize(policy: "commonPartsRequest.Technician")]
-        public async Task<IActionResult> GetTechincianRequest(string techinchId,int page =1 , int PageSize=10, string Status = null, int day=0)
+        public async Task<IActionResult> GetTechincianRequest(string techinchId, bool iscleaning, int page =1 , int PageSize=10, string Status = null, int day=0)
         {
 
-            var Requests = await _CommonPartsService.GetTechincanRequest(techinchId, Status, day)
+            var Requests = await _CommonPartsService.GetTechincanRequest(iscleaning,techinchId, Status, day)
                 .Select(R => new CommonPartsResponse()
                 {
                     id = R.id,
@@ -377,10 +382,10 @@ namespace EtisiqueApi.Controllers
         }
         [HttpGet("Manager/{ManagerId}/{page}/{pageSize}")]
         [Authorize(policy: "commonPartsRequest.Manager")]
-        public async Task<IActionResult> GetManagerRequest(string ManagerId,int page=1,int pageSize=10, string Status = null, int day=0)
+        public async Task<IActionResult> GetManagerRequest(string ManagerId, bool iscleaning, int page=1,int pageSize=10, string Status = null, int day=0)
         {
 
-            var Requests = await _CommonPartsService.GetManagerRequest(ManagerId, Status,day)
+            var Requests = await _CommonPartsService.GetManagerRequest(iscleaning, ManagerId, Status,day)
                .Select(R => new CommonPartsResponse()
                {
                    id = R.id,

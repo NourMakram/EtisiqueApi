@@ -116,11 +116,10 @@ namespace EtisiqueApi.Repositiories
             JwtSecurityToken MyToken = new JwtSecurityToken(
                issuer: "http://localhost:5261",
                audience: "http://localhost:4200",
-               expires: DateTime.Now.AddHours(30),
+              // expires: DateTime.Now.AddMonths(5),
+              expires: DateTime.Now.AddMinutes(5),
                claims: claims,
                signingCredentials: signingCredentials
-
-
                );
             return MyToken;
 
@@ -430,6 +429,7 @@ namespace EtisiqueApi.Repositiories
                         BulidingName = registerDto.BulidingName,
                         UnitNo = registerDto.UnitNo,
                         City = registerDto.City,
+                        projectId=registerDto.projectId,
                         TypeProject = registerDto.TypeProject,
                     };
                     var Result3 = await _customerService.AddAsync(customer);

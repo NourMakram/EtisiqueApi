@@ -37,18 +37,18 @@ namespace EtisiqueApi.Repositiories
         }
 
  
-        public RequestsCommonParts LastOrder()
+        public RequestsCommonParts LastOrder(bool IsCleaning)
         {
 
-            return _context.RequestCommonParts.AsNoTracking().OrderBy(r => r.CreatedDate).LastOrDefault();
+            return _context.RequestCommonParts.AsNoTracking().OrderBy(r => r.CreatedDate).LastOrDefault(p=>p.IsCleaning== IsCleaning);
 
         }
-        public IQueryable<RequestsCommonParts> GetRequestToProjectsManager(string userId ,List<int>Projects,string projectName, int TypeServiceId, string techniciId,
+        public IQueryable<RequestsCommonParts> GetRequestToProjectsManager(string userId ,List<int>Projects, bool IsCleaning,string projectName, int TypeServiceId, string techniciId,
          string ManagerId, string BuildingName, string Status, string Code, bool IsUrget = false, int day = 0
          , int week = 0, int year = 0, int month = 0, DateOnly from = default, DateOnly to = default, int ConfRequest = 0)
         {
             var Requests = _context.RequestCommonParts.AsNoTracking()
-                .Where(R => Projects.Any(userProject => userProject == R.projectId))
+                .Where(R => Projects.Any(userProject => userProject == R.projectId) && R.IsCleaning == IsCleaning)
                        .OrderByDescending(R => R.id)
                        .Include(R => R.Manager)
                        .Include(R => R.Technician)
@@ -149,12 +149,13 @@ namespace EtisiqueApi.Repositiories
 		
 			return Requests;
         }
-        public IQueryable<RequestsCommonParts> FilterRequestsBy(string projectName, int TypeServiceId, string techniciId,
+        public IQueryable<RequestsCommonParts> FilterRequestsBy(bool IsCleaning, string projectName, int TypeServiceId, string techniciId,
             string ManagerId, string BuildingName, string Status, string Code, bool IsUrget = false, int day = 0
             , int week = 0, int year = 0, int month = 0, DateOnly from = default, DateOnly to = default, int ConfRequest = 0)
         {
             var Requests = _context.RequestCommonParts.AsNoTracking()
                        .OrderByDescending(R => R.id)
+                       .Where(R=>R.IsCleaning == IsCleaning)
                        .Include(R => R.Manager)
                        .Include(R => R.Technician)
                        .Include(R => R.Project)
@@ -300,7 +301,8 @@ namespace EtisiqueApi.Repositiories
 										Type = R.Type == 1 ? "داخل" : "خارج",
                                         images=images,
                                         servicesVerification= RequestVerivication,
-                                        timeElasped = R.TimeElapsed
+                                        timeElasped = R.TimeElapsed,
+                                        IsCleaning=R.IsCleaning
 
                                     }).FirstOrDefault(R => R.id == id);
         }
@@ -457,10 +459,10 @@ namespace EtisiqueApi.Repositiories
 
         }
 
-        public IQueryable<RequestsCommonParts> GetTechincanRequest(string techincanId, string stauts, int day = 0)
+        public IQueryable<RequestsCommonParts> GetTechincanRequest(bool IsCleaning, string techincanId, string stauts, int day = 0)
         {
             var Requests = _context.RequestCommonParts.AsNoTracking()
-                .Where(R => R.TechnicianId == techincanId || R.ManagerId == techincanId);
+                .Where(R => R.TechnicianId == techincanId || R.ManagerId == techincanId && R.IsCleaning == IsCleaning);
             if(stauts != null)
             {
                 Requests = Requests.Where(R => R.RequestStuatus == stauts);
@@ -473,10 +475,10 @@ namespace EtisiqueApi.Repositiories
             }
             return Requests;
         }
-        public IQueryable<RequestsCommonParts> GetManagerRequest(string managerId, string stauts,int day=0)
+        public IQueryable<RequestsCommonParts> GetManagerRequest(bool IsCleaning, string managerId, string stauts,int day=0)
         {
             var Requests = _context.RequestCommonParts.AsNoTracking()
-                 .Where(R =>  R.ManagerId == managerId);
+                 .Where(R =>  R.ManagerId == managerId && R.IsCleaning == IsCleaning);
             if (stauts != null)
             {
                 Requests = Requests.Where(R => R.RequestStuatus == stauts);

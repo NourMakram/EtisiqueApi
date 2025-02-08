@@ -260,11 +260,21 @@ namespace EtisiqueApi.Repositiories
         public bool IsGuaranteeAvailable(string userId, int projectId, int unitNo, string buidingName)
         {
             DateOnly now = DateOnly.FromDateTime(DateTime.UtcNow);
-           bool resut = _Customer
+           
+           Customer unitData = _Customer
                        .Include(C => C.ApplicationUser)
                        .ThenInclude(C => C.Project)
-                       .Any(R => R.UserId == userId && R.ApplicationUser.projectId == projectId && R.UnitNo == unitNo && R.BulidingName == buidingName && R.GuaranteeEnd >= now);
-            return resut;
+                       .FirstOrDefault(R => R.UserId == userId && R.ApplicationUser.projectId == projectId && R.UnitNo == unitNo && R.BulidingName == buidingName);
+            if (unitData == null)
+            {
+                return false;
+            }
+            if(unitData.GuaranteeEnd==null || unitData.GuaranteeEnd >= now)
+            {
+                return true;
+            }
+            
+            return false;
         
         }
 
@@ -288,6 +298,19 @@ namespace EtisiqueApi.Repositiories
                 return (false, new string[] { ex.Message });
 
             }
+        }
+        public bool  delete(int Id)
+        {
+            var customer = _Customer.FirstOrDefault(c => c.Id == Id);
+            if (customer == null)
+            {
+                return false;
+            }
+            customer.IsReceived = false;
+            base.Update(customer);
+            return true;
+            
+
         }
     }
 }

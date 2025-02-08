@@ -91,9 +91,10 @@ namespace EcommercePro.Models
                 new ApartmentService() { Id = 6, Name = "خشب" },
                 new ApartmentService() { Id = 7, Name = "جبس" },
                 new ApartmentService() { Id = 8, Name = "نحاس تكييف" },
-                new ApartmentService() { Id = 9, Name = "انتركوم" }
+                new ApartmentService() { Id = 9, Name = "انتركوم" },
+		        new ApartmentService() { Id = 10, Name = "نظافة" }
 
-                );
+				);
 
             modelBuilder.Entity<ApartmentServicesType>().HasData(
              new ApartmentServicesType() { Id = 1, Name = "ليد", ApartmentServiceId = 1 },

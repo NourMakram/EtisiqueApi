@@ -84,6 +84,14 @@ namespace EtisiqueApi.Controllers
 
         }
 
+        //[HttpGet("change/{Id}")]
+        //[AllowAnonymous]
+        //public IActionResult cchange(int Id)
+        //{
+        //    var result =_customerService.delete(Id);
+        //    return Ok(result);
+        //}
+
 
     }
 }

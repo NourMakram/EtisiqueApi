@@ -19,6 +19,7 @@ namespace EtisiqueApi.Repositiories.Interfaces
             string ClientPhone, DateOnly from, DateOnly to);
         public bool IsGuaranteeAvailable(string userId, int projectId, int unitNo, string buidingName);
         public Task<(bool Succeeded, string[] Errors)> UpdateUnitsManagement(UnitsManagmentDto unitsManagment);
+        public bool delete(int Id);
 
 
     }
