@@ -546,7 +546,11 @@ namespace EtisiqueApi.Repositiories
                 // Increase the hour by 3
                 var dateAfter3Hours = currentDate.AddHours(3);
                 Request.RequestStuatus = "اغلاق";
-                var result2 = Update(Request);
+				TimeSpan resultDate = (dateAfter3Hours - Request.DateOfVisit);
+				TimeSpan timeElapsed = new TimeSpan(resultDate.Days, resultDate.Hours, resultDate.Minutes, 0);
+				Request.TimeElapsed = string.Format("{0}:{1:D2}:{2:D2}", timeElapsed.Days, timeElapsed.Hours, timeElapsed.Minutes);
+
+				var result2 = Update(Request);
                 if (!result2.Succeeded)
                 {
                     return (false, result2.Errors);
@@ -879,8 +883,8 @@ namespace EtisiqueApi.Repositiories
                     ProcedureType = "تعميد",
                     userId = approveRequest.userId,
                     CreatedDate = dateAfter3Hours,
-                    Notes = "تم تعميد الطلب",
-                    ServiceType = (int)ServiceTypeEnum.ApartmentService
+					Notes = "تم ارسال الطلب للتعميد",
+					ServiceType = (int)ServiceTypeEnum.ApartmentService
                 };
 
                 var result = await _RequestManagmentService.AddAsync(Approve);
@@ -1029,7 +1033,8 @@ namespace EtisiqueApi.Repositiories
                 }
 
                 Request.RequestStuatus = "مرفوض";
-                var result2 = Update(Request);
+				//Request.up = dateAfter3Hours;
+				var result2 = Update(Request);
 
                 if (!result2.Succeeded)
                 {

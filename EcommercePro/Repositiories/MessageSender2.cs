@@ -388,9 +388,8 @@ namespace EtisiqueApi.Repositiories
 
                 string message = $"عزيزى العميل تم اغلاق الطلب  رقم {Code} بنجاح" +
                     $" ولان رايك يفرق معنا نسعد بتقييم الخدمة المقدمة لكم "+
-                    $"https://etsaq/app/clientPage/shrt/{Id}";
-           
-                return message;
+                    $"https://etsaq.com/app/clientPage/shrt/{Id}";
+                 return message;
 
             }
 

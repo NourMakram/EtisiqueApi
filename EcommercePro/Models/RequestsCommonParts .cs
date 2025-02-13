@@ -57,6 +57,10 @@ namespace EtisiqueApi.Models
 
         public bool IsCleaning { get; set; } = false;
 
+        public string? TimeElapsedClose1 { get; set; }
+
+		public string? TimeElapsedClose2 { get; set; }
+
 
 	}
 }

@@ -38,7 +38,9 @@ namespace EtisiqueApi.Models
         public string Period { set; get; }
 
         public DateTime DateOfVisit { set; get; }
-        public string? RequestImage { set; get; }
+        public DateTime UpdatedDate { set; get; } = DateTime.UtcNow;
+
+		public string? RequestImage { set; get; }
 
        // public int NumDays { set; get; } = 0;
         public string? TimeElapsed { set; get; }

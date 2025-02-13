@@ -49,6 +49,9 @@ namespace EtisiqueApi.DTO
 
         public string timeElasped { set; get; }
         public bool IsCleaning { get; set; }
+		public string TimeElapsedClose1 { get; set; }
 
-    }
+		public string TimeElapsedClose2 { get; set; }
+
+	}
 }

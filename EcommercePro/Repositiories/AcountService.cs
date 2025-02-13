@@ -116,8 +116,8 @@ namespace EtisiqueApi.Repositiories
             JwtSecurityToken MyToken = new JwtSecurityToken(
                issuer: "http://localhost:5261",
                audience: "http://localhost:4200",
-              // expires: DateTime.Now.AddMonths(5),
-              expires: DateTime.Now.AddMinutes(5),
+              expires: DateTime.Now.AddMonths(5),
+              //expires: DateTime.Now.AddMinutes(5),
                claims: claims,
                signingCredentials: signingCredentials
                );

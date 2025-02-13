@@ -49,8 +49,8 @@ namespace EtisiqueApi.Repositiories
         {
             var Requests = _context.RequestCommonParts.AsNoTracking()
                 .Where(R => Projects.Any(userProject => userProject == R.projectId) && R.IsCleaning == IsCleaning)
-                       .OrderByDescending(R => R.id)
-                       .Include(R => R.Manager)
+				      .OrderByDescending(R => R.UpdatedDate)
+					   .Include(R => R.Manager)
                        .Include(R => R.Technician)
                        .Include(R => R.Project)
                        .Include(R => R.ServiceType)
@@ -154,8 +154,8 @@ namespace EtisiqueApi.Repositiories
             , int week = 0, int year = 0, int month = 0, DateOnly from = default, DateOnly to = default, int ConfRequest = 0)
         {
             var Requests = _context.RequestCommonParts.AsNoTracking()
-                       .OrderByDescending(R => R.id)
-                       .Where(R=>R.IsCleaning == IsCleaning)
+                       .OrderByDescending(R => R.UpdatedDate)
+					   .Where(R=>R.IsCleaning == IsCleaning)
                        .Include(R => R.Manager)
                        .Include(R => R.Technician)
                        .Include(R => R.Project)
@@ -386,7 +386,7 @@ namespace EtisiqueApi.Repositiories
                 }
             }
             Request.RequestStuatus = "اغلاق";
-            TimeSpan resultDate = (dateAfter3Hours - Request.DateOfVisit);
+            TimeSpan resultDate = (dateAfter3Hours - Request.UpdatedDate);
             TimeSpan timeElapsed = new TimeSpan(resultDate.Days, resultDate.Hours, resultDate.Minutes, 0);
             Request.TimeElapsed = string.Format("{0}:{1:D2}:{2:D2}", timeElapsed.Days, timeElapsed.Hours, timeElapsed.Minutes);
 
@@ -421,7 +421,7 @@ namespace EtisiqueApi.Repositiories
                 ProcedureType = "تعليق",
                 userId = CommentData.userId,
                 CreatedDate = dateAfter3Hours,
-                Notes = Message,
+                Notes = CommentData?.Note !=null ? CommentData?.Note:Message,
                 ServiceType = (int)ServiceTypeEnum.CommonParts,
                 //Attachments = CommentData.filePath
 
@@ -461,7 +461,7 @@ namespace EtisiqueApi.Repositiories
 
         public IQueryable<RequestsCommonParts> GetTechincanRequest(bool IsCleaning, string techincanId, string stauts, int day = 0)
         {
-            var Requests = _context.RequestCommonParts.AsNoTracking()
+            var Requests = _context.RequestCommonParts.OrderByDescending(R => R.UpdatedDate).AsNoTracking()
                 .Where(R => R.TechnicianId == techincanId || R.ManagerId == techincanId && R.IsCleaning == IsCleaning);
             if(stauts != null)
             {
@@ -537,8 +537,23 @@ namespace EtisiqueApi.Repositiories
 
             Request.RequestStuatus = RequestStuatus;
             Request.UpdatedDate = dateAfter3Hours;
+            if(ProcedureType=="اقفال اول")
+            {
+				TimeSpan resultDate = (dateAfter3Hours - Request.DateOfVisit);
+				TimeSpan timeElapsed = new TimeSpan(resultDate.Days, resultDate.Hours, resultDate.Minutes, 0);
+				Request.TimeElapsedClose1 = string.Format("{0}:{1:D2}:{2:D2}", timeElapsed.Days, timeElapsed.Hours, timeElapsed.Minutes);
 
-            var result2 = Update(Request);
+            }
+            if(ProcedureType=="اقفال ثانى")
+            {
+				TimeSpan resultDate = (dateAfter3Hours - Request.UpdatedDate);
+				TimeSpan timeElapsed = new TimeSpan(resultDate.Days, resultDate.Hours, resultDate.Minutes, 0);
+				Request.TimeElapsedClose2 = string.Format("{0}:{1:D2}:{2:D2}", timeElapsed.Days, timeElapsed.Hours, timeElapsed.Minutes);
+
+			}
+
+
+			var result2 = Update(Request);
 
             return (result2.Succeeded, result2.Errors);
 
@@ -578,7 +593,7 @@ namespace EtisiqueApi.Repositiories
   
                 Request.RequestStuatus = "اغلاق";
                 Request.UpdatedDate = dateAfter3Hours;
-                TimeSpan resultDate = (dateAfter3Hours - Request.DateOfVisit);
+                TimeSpan resultDate = (dateAfter3Hours - Request.UpdatedDate);
                 TimeSpan timeElapsed = new TimeSpan(resultDate.Days, resultDate.Hours, resultDate.Minutes, 0);
                 Request.TimeElapsed = string.Format("{0}:{1:D2}:{2:D2}", timeElapsed.Days, timeElapsed.Hours, timeElapsed.Minutes);
 
@@ -784,7 +799,7 @@ namespace EtisiqueApi.Repositiories
 					ProcedureType = "تعميد",
 					userId = approveRequest.userId,
 					CreatedDate = dateAfter3Hours,
-					Notes = "تم تعميد الطلب",
+					Notes ="تم ارسال الطلب للتعميد",
 					ServiceType = (int)ServiceTypeEnum.CommonParts
 				};
 
@@ -797,6 +812,7 @@ namespace EtisiqueApi.Repositiories
 
 				Request.RequestStuatus = "جارى التعميد";
 				Request.IsConfirmation = true;
+				Request.UpdatedDate = dateAfter3Hours;
 				var result2 = Update(Request);
 
 				if (!result2.Succeeded)
@@ -914,6 +930,7 @@ namespace EtisiqueApi.Repositiories
 				}
 
 				Request.RequestStuatus = "مقبول";
+				Request.UpdatedDate = dateAfter3Hours;
 				var result2 = Update(Request);
 
 				if (!result2.Succeeded)
@@ -985,6 +1002,7 @@ namespace EtisiqueApi.Repositiories
 				}
 
 				Request.RequestStuatus = "مرفوض";
+                Request.UpdatedDate = dateAfter3Hours;
 				var result2 = Update(Request);
 
 				if (!result2.Succeeded)

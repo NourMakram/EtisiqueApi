@@ -152,7 +152,7 @@ namespace EtisiqueApi.Controllers
                     TechnicianName = R.Technician.FullName,
                     IsUrgent = R.IsUrgent==true?"نعم" : "لا",
                     CreatedDate = R.CreatedDate.ToString("dd-MM-yyyy | hh:mm:ss tt"),
-                    DateOfVisit = R.DateOfVisit.ToString("dd-MM-yyyy | hh:mm:ss tt"),
+                    DateOfVisit = R.DateOfVisit.ToString("dd-MM-yyyy "),
                     UpdatedDate = R.UpdatedDate.ToString("dd-MM-yyyy | hh:mm:ss tt"),
                     BuildingName = R.BuildingName,
                     Position = R.Position,
@@ -161,7 +161,9 @@ namespace EtisiqueApi.Controllers
                     Type = R.Type == 1 ? "داخل" : "خارج",
                     ManagerNote=R.ManagerNote,
                     ProjectId = R.projectId,
-                    timeElasped = R.TimeElapsed
+                    timeElasped = R.TimeElapsed,
+                    TimeElapsedClose1=R.TimeElapsedClose1,
+                    TimeElapsedClose2=R.TimeElapsedClose2
 
                     })
                 .ToPaginatedListAsync(Page, PageSize);
@@ -180,7 +182,7 @@ namespace EtisiqueApi.Controllers
                     TechnicianName = R.Technician.FullName,
                      IsUrgent = R.IsUrgent == true ? "نعم" : "لا",
                     CreatedDate = R.CreatedDate.ToString("dd-MM-yyyy | hh:mm:ss tt"),
-                    DateOfVisit = R.DateOfVisit.ToString("dd-MM-yyyy | hh:mm:ss tt"),
+                    DateOfVisit = R.DateOfVisit.ToString("dd-MM-yyyy "),
                     UpdatedDate = R.UpdatedDate.ToString("dd-MM-yyyy | hh:mm:ss tt"),
                     BuildingName = R.BuildingName,
                     Position = R.Position,
@@ -189,10 +191,12 @@ namespace EtisiqueApi.Controllers
                     Type=R.Type==1 ?"داخل" : "خارج",
                     ManagerNote = R.ManagerNote,
                     ProjectId = R.projectId,
-                    timeElasped=R.TimeElapsed
-                    
+                    timeElasped=R.TimeElapsed,
+					TimeElapsedClose1 = R.TimeElapsedClose1,
+					TimeElapsedClose2 = R.TimeElapsedClose2
 
-                })
+
+				})
                 .ToPaginatedListAsync(Page,PageSize);
             return Ok(Requests);
 
@@ -372,8 +376,11 @@ namespace EtisiqueApi.Controllers
                     Position = R.Position,
                     ServiceType = R.ServiceType.Name,
                     UnitNo = R.UnitNo,
-                    Type = R.Type == 1 ? "داخل" : "خارج"
-                })
+                    Type = R.Type == 1 ? "داخل" : "خارج",
+					TimeElapsedClose1 = R.TimeElapsedClose1,
+					TimeElapsedClose2 = R.TimeElapsedClose2,
+                    timeElasped=R.TimeElapsed
+				})
                .ToPaginatedListAsync(page, PageSize);
 
             return Ok(Requests);
@@ -406,9 +413,12 @@ namespace EtisiqueApi.Controllers
                    ServiceType = R.ServiceType.Name,
                    UnitNo = R.UnitNo,
                    Type = R.Type == 1 ? "داخل" : "خارج",
-                   ProjectId = R.projectId
+                   ProjectId = R.projectId,
+				   TimeElapsedClose1 = R.TimeElapsedClose1,
+				   TimeElapsedClose2 = R.TimeElapsedClose2,
+		           timeElasped = R.TimeElapsed
 
-               })
+			   })
               .ToPaginatedListAsync(page, pageSize);
 
             return Ok(Requests);
