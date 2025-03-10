@@ -9,6 +9,7 @@ namespace EtisiqueApi.Repositiories.Interfaces
         public (bool Succeeded, string[] Errors) UpdateLocation(int customerId, double Longitude, double Latitude);
         public Location GetLocationByCustomerId(int customerId, double Longitude, double Latitude);
         public Location GetLocationByCustomerId(int customerId);
+        public Location GetLocationByUserId(string userId);
 
     }
 

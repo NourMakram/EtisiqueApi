@@ -299,7 +299,7 @@ namespace EtisiqueApi.Repositiories
 
         }
 
-        public IQueryable<EmergencyRequestDto.EmergencyRequestToShow> GetRequestToCustomer(int CustomerId, string code, string Status, DateOnly date = default)
+        public IQueryable<EmergencyRequestDto.EmergencyRequestToShow> GetRequestToCustomer(string CustomerId, string code, string Status, DateOnly date = default)
         {
             IQueryable<Models.Emergency> requests =
                 _context.Emergencies.Include(R => R.Project)
@@ -311,7 +311,7 @@ namespace EtisiqueApi.Repositiories
             if (code != null && date != default)
             {
                 requests = requests.AsNoTracking()
-                               .Where(R => R.CustomerId == CustomerId &&
+                               .Where(R => R.Customer.UserId == CustomerId &&
                                R.RequestCode.ToString().Contains(code)
                                && (R.CreatedDate.Day == date.Day && R.CreatedDate.Month == date.Month && R.CreatedDate.Year == date.Year))
                                .AsQueryable();
@@ -320,7 +320,7 @@ namespace EtisiqueApi.Repositiories
             else if (code != null)
             {
                 requests = requests.AsNoTracking()
-                            .Where(R => R.CustomerId == CustomerId && R.RequestCode.ToString().Contains(code))
+                            .Where(R => R.Customer.UserId == CustomerId && R.RequestCode.ToString().Contains(code))
                             .AsQueryable();
 
 
@@ -328,7 +328,7 @@ namespace EtisiqueApi.Repositiories
             else if (date != default)
             {
                 requests = requests.AsNoTracking()
-                            .Where(R => R.CustomerId == CustomerId &&
+                            .Where(R => R.Customer.UserId == CustomerId &&
                             (date != default && (R.CreatedDate.Day == date.Day && R.CreatedDate.Month ==
                             date.Month && R.CreatedDate.Year == date.Year)))
                             .AsQueryable();
@@ -339,20 +339,20 @@ namespace EtisiqueApi.Repositiories
                 if (Status == "0")
                 {
                     requests = requests.AsNoTracking()
-                            .Where(R => R.CustomerId == CustomerId && R.RequestStuatus != "اغلاق")
+                            .Where(R => R.Customer.UserId==CustomerId && R.RequestStuatus != "اغلاق")
                             .AsQueryable();
                 }
                 else
                 {
                     requests = requests.AsNoTracking()
-                                                .Where(R => R.CustomerId == CustomerId && R.RequestStuatus == "اغلاق")
+                                                .Where(R => R.Customer.UserId == CustomerId && R.RequestStuatus == "اغلاق")
                                                 .AsQueryable();
                 }
             }
             else
             {
                 requests = requests.AsNoTracking()
-                            .Where(R => R.CustomerId == CustomerId)
+                            .Where(R => R.Customer.UserId == CustomerId)
                             .AsQueryable();
 
             }

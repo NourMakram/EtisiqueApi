@@ -30,7 +30,7 @@ namespace EtisiqueApi.DTO
         public string? Description { set; get; }
 
         [Required(ErrorMessage = "Period is Required")]
-        [AllowedValues(["10am:2pm", "3pm:7pm"])]
+       // [AllowedValues(["10am:2pm", "3pm:7pm"])]
         public string Period { set; get; }
         [Required(ErrorMessage = "Date Of Visit is Required")]
         public DateTime DateOfVisit { set; get; }

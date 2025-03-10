@@ -90,14 +90,14 @@ namespace EtisiqueApi.Repositiories
             }
               if (day > 0)
             {
-                DateOnly currentData = DateOnly.FromDateTime(DateTime.Now);
+                DateOnly currentData = DateOnly.FromDateTime(DateTime.UtcNow);
                 Requests = Requests.Where(R => R.RequestStuatus == "جديد" && DateOnly.FromDateTime(R.DateOfVisit) == currentData);
 
             }
              if (week > 0)
             {
                 // تحديد بداية ونهاية الأسبوع الحالي
-                DateOnly startOfWeek = DateOnly.FromDateTime(DateTime.Now.StartOfWeek(DayOfWeek.Sunday));
+                DateOnly startOfWeek = DateOnly.FromDateTime(DateTime.UtcNow.StartOfWeek(DayOfWeek.Sunday));
                 DateOnly endOfWeek = startOfWeek.AddDays(7);
 
                 // فلترة الطلبات خلال هذا الأسبوع
@@ -106,13 +106,13 @@ namespace EtisiqueApi.Repositiories
             }
              if (month > 0)
             {
-                int CurrentMonth = DateTime.Now.Month;
+                int CurrentMonth = DateTime.UtcNow.Month;
                 Requests = Requests.Where(R => R.CreatedDate.Month == CurrentMonth);
 
             }
              if (year > 0)
             {
-                int CurrentYear = DateTime.Now.Year;
+                int CurrentYear = DateTime.UtcNow.Year;
 
                 Requests = Requests.Where(R => R.CreatedDate.Year == CurrentYear);
 
@@ -196,14 +196,14 @@ namespace EtisiqueApi.Repositiories
             }
              if(day > 0)
             {
-                DateOnly currentData = DateOnly.FromDateTime(DateTime.Now);
+                DateOnly currentData = DateOnly.FromDateTime(DateTime.UtcNow);
                 Requests = Requests.Where(R => R.RequestStuatus == "جديد" && DateOnly.FromDateTime(R.DateOfVisit) == currentData);
 
             }
              if (week > 0)
             {
                  // تحديد بداية ونهاية الأسبوع الحالي
-                DateOnly startOfWeek = DateOnly.FromDateTime(DateTime.Now.StartOfWeek(DayOfWeek.Sunday));
+                DateOnly startOfWeek = DateOnly.FromDateTime(DateTime.UtcNow.StartOfWeek(DayOfWeek.Sunday));
                 DateOnly endOfWeek = startOfWeek.AddDays(7);
 
                 // فلترة الطلبات خلال هذا الأسبوع
@@ -212,13 +212,13 @@ namespace EtisiqueApi.Repositiories
             }
              if (month > 0)
             {
-                int CurrentMonth = DateTime.Now.Month;
+                int CurrentMonth = DateTime.UtcNow.Month;
                 Requests = Requests.Where(R => R.CreatedDate.Month == CurrentMonth);
 
             }
              if (year > 0)
             {
-                int CurrentYear = DateTime.Now.Year;
+                int CurrentYear = DateTime.UtcNow.Year;
 
                 Requests = Requests.Where(R =>R.CreatedDate.Year == CurrentYear);
 
@@ -469,7 +469,7 @@ namespace EtisiqueApi.Repositiories
             }
             else if(day > 0)
             {
-              DateOnly  currentData =DateOnly.FromDateTime(DateTime.Now);
+              DateOnly  currentData =DateOnly.FromDateTime(DateTime.UtcNow);
                 Requests = Requests.Where(R => R.RequestStuatus == "جديد" && DateOnly.FromDateTime(R.DateOfVisit) == currentData);
 
             }
@@ -485,7 +485,7 @@ namespace EtisiqueApi.Repositiories
             }
             else if (day > 0)
             {
-                DateOnly currentData = DateOnly.FromDateTime(DateTime.Now);
+                DateOnly currentData = DateOnly.FromDateTime(DateTime.UtcNow);
                 Requests = Requests.Where(R => R.RequestStuatus == "جديد" && DateOnly.FromDateTime(R.DateOfVisit) == currentData);
 
             }
@@ -535,8 +535,7 @@ namespace EtisiqueApi.Repositiories
                 }
             }
 
-            Request.RequestStuatus = RequestStuatus;
-            Request.UpdatedDate = dateAfter3Hours;
+           
             if(ProcedureType=="اقفال اول")
             {
 				TimeSpan resultDate = (dateAfter3Hours - Request.DateOfVisit);
@@ -551,7 +550,8 @@ namespace EtisiqueApi.Repositiories
 				Request.TimeElapsedClose2 = string.Format("{0}:{1:D2}:{2:D2}", timeElapsed.Days, timeElapsed.Hours, timeElapsed.Minutes);
 
 			}
-
+			Request.RequestStuatus = RequestStuatus;
+			Request.UpdatedDate = dateAfter3Hours;
 
 			var result2 = Update(Request);
 
@@ -1068,6 +1068,18 @@ namespace EtisiqueApi.Repositiories
            await  _context.SaveChangesAsync();
 
             return (true,null);
+
+        }
+
+        public async Task<bool> AreTwentyRequestsAddedTodayAsync()
+        {
+            var tomorrow = DateTime.UtcNow.Date.AddDays(1); // الحصول على تاريخ الغد
+           
+            var count = await _context.RequestCommonParts
+                .CountAsync(r => r.DateOfVisit.Date == tomorrow); // تأكد من أن لديك حقل DateOfVisit
+
+            //return count >= 2;
+            return count >= 20; // إرجاع true إذا كان العدد 20 أو أكثر
 
         }
 

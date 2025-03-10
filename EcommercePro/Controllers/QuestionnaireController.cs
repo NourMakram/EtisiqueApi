@@ -114,6 +114,14 @@ namespace EtisiqueApi.Controllers
 
         }
 
+        [HttpGet("Get/{id}")]
+        [Authorize(Policy = "Questionnaires.ServicesView")]
+        public IActionResult GetEvelautionDetails(int id)
+        {
+            EvelautionDetails evelautionDetails = _questionnaireService.GetEvelautionDetails(id);
+            return Ok(evelautionDetails);
+        }
+
         [HttpGet("Url/{Id}")]
         [AllowAnonymous]
         public IActionResult GetUrl(string Id)

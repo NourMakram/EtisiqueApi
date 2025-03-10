@@ -113,10 +113,10 @@ namespace EcommercePro.Models
 		public static List<Questeion> Questeions = new List<Questeion>()
         {
             new Questeion { Id = 1, Name = "جودة اداء الفنى" },
-            new Questeion { Id = 2, Name = "سرعة اداء الفنى" },
-            new Questeion { Id = 3, Name = "نظافة المكان بعد الصيانة" },
-            new Questeion { Id = 4, Name = "حضور الفنى فى الوقت المحدد" },
-            new Questeion { Id = 5, Name = "المظهر العام للفنى" },
+            //new Questeion { Id = 2, Name = "سرعة اداء الفنى" },
+            new Questeion { Id = 2, Name = "نظافة المكان بعد الصيانة" },
+            new Questeion { Id = 3, Name = "حضور الفنى فى الوقت المحدد" },
+            new Questeion { Id = 4, Name = "المظهر العام للفنى" },
 
         };
 

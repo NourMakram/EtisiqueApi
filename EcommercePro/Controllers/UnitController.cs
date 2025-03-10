@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using EtisiqueApi.DTO;
 using EtisiqueApi.Pagination;
-
+ 
 namespace EtisiqueApi.Controllers
 {
     [Route("api/[controller]")]
@@ -17,10 +17,11 @@ namespace EtisiqueApi.Controllers
     {
         
         private ICustomerService _customerService;
-        
-        public UnitController(ICustomerService customerService)
+        private ILocationService _locationService;
+        public UnitController(ICustomerService customerService,ILocationService locationService)
         {
-            _customerService = customerService;  
+            _customerService = customerService;
+            _locationService = locationService;
         }
         [HttpGet("UnitsManagment/{page}/{pagesize}/{projectId}")]
         [Authorize(policy: "projects.manage")]
@@ -45,7 +46,7 @@ namespace EtisiqueApi.Controllers
             }
             return Ok();
         }
-        [HttpGet("Check/{userId}/{projectId}/{unitNo}/{buidingName}")]
+        [HttpGet("CheckGuarantee/{userId}/{projectId}/{unitNo}/{buidingName}")]
         [Authorize]
         public IActionResult CheckGuarantee(string userId, int projectId, int unitNo, string buidingName)
         {
@@ -53,44 +54,122 @@ namespace EtisiqueApi.Controllers
             return Ok(new { result = result });
 
         }
-        [HttpGet("Get/{Id}")]
+        [HttpGet("CheckGuarantee/{Id}")]
         [Authorize]
-        public async Task<IActionResult> GetUnit(int Id)
+        public IActionResult CheckGuarantee(int Id)
         {
-            var Unit =await  _customerService.GetByIdAsync(Id);
-            if (Unit != null)
-            {
-                var result = new Client()
-                {
+            bool result = _customerService.IsGuaranteeAvailable(Id);
+            return Ok(new { result = result });
 
-                    Id = Unit.Id.ToString(),
-                    userId = Unit.UserId,
-                    FullName = Unit.ApplicationUser.FullName,
-                    Email = Unit.ApplicationUser.Email,
-                    phoneNumber = Unit.ApplicationUser.PhoneNumber,
-                    UnitNum = Unit.UnitNo,
-                    BuildingName = Unit.BulidingName,
-                    GuaranteeStart = Unit.GuaranteeStart,
-                    GuaranteeEnd = Unit.GuaranteeEnd,
-                    project = Unit.ApplicationUser.Project.ProjectName,
-                    ReceivedDate = Unit.ReceivedDate != null ? Unit.ReceivedDate.Value.ToString("dd-MM-yyyy hh:mm tt") : "No date available"
-
-
-                };
-                return Ok(result);
-
-            }
+        }
+        [HttpGet("GetUnit/{Id}")]
+        [Authorize]
+        public async Task<IActionResult> GetUnitDeatils(int Id)
+        {
+            var Unit =await  _customerService.GetUnitDetails(Id);
+            
             return Ok(Unit);
 
         }
+        [HttpGet("UnitsWithGuarantee/{userId}")]
+        [Authorize]
+        public IActionResult GetUnitsWithGuarantee(string userId)
+        {
+            List<unit> units = _customerService.UnitsWithGuarantee(userId);
+            return Ok(units);
+        }
 
-        //[HttpGet("change/{Id}")]
-        //[AllowAnonymous]
-        //public IActionResult cchange(int Id)
-        //{
-        //    var result =_customerService.delete(Id);
-        //    return Ok(result);
-        //}
+        [HttpGet("Get/{Id}")]
+		[AllowAnonymous]
+		public async Task<IActionResult> GetUnit2(int Id)
+		{
+			var Unit = await _customerService.GetByIdAsync(Id);
+            if (Unit == null)
+            {
+                return BadRequest("Unit Not Found");
+            }
+               Location location = _locationService.GetLocationByUserId(Unit.UserId);
+
+            UnitDetails unit = new UnitDetails()
+            {
+                
+                id = Unit.Id,
+                FullName = Unit.ApplicationUser.FullName,
+                Email = Unit.ApplicationUser.Email,
+                PhoneNumber = Unit.ApplicationUser.PhoneNumber,
+                projectId=Unit.projectId != null ? (int)Unit.projectId : 0,
+                //projectId = (int)Unit.ApplicationUser.projectId != null ?(int)Unit.ApplicationUser.projectId : 0,
+                TypeProject = Unit.TypeProject, //مالك - مستأجر
+                City = Unit.City,
+                UnitNo = Unit.UnitNo,
+                Latitude =(double) location?.Latitude,
+                Longitude = (double)location?.Longitude,
+                UserId = Unit.UserId,
+                BuidingName = Unit.BulidingName,
+                GuaranteeStart = Unit.GuaranteeStart,
+                GuaranteeEnd = Unit.GuaranteeEnd,
+
+            };
+
+                return Ok(unit);
+
+		}
+        [HttpPost]
+        [Authorize(policy: "users.manage")]
+        public async Task<IActionResult>Add (NewUnit newUnit)
+        {
+            var result = await _customerService.AddUnit(newUnit);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+            return Ok();
+        }
+        [HttpPut("UpdateUnit")]
+        [Authorize(policy: "users.manage")]
+        public async Task<IActionResult> Update(NewUnit newUnit)
+        {
+            var result = await _customerService.UnpdateUnit(newUnit);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+            return Ok();
+        }
+
+        [HttpGet("HajarUnit/{Id}")]
+        [Authorize]
+        public IActionResult HajarProject(int Id)
+        {
+            var result = _customerService.IsHajarPRojct(Id);
+            return Ok(new { reuslt = result });
+        }
+
+
+        [HttpGet("Units/{userId}")]
+        public IActionResult UnitsByUserId(string userId)
+        {
+          List<unit> units= _customerService.GetUnitsByUserId(userId);
+            return Ok(units);
+        }
+        [HttpDelete]
+        [Authorize(policy: "users.manage")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var Unit = await _customerService.GetByIdAsync(id);
+            if (Unit == null)
+            {
+                return BadRequest("Unit Not Found");
+            }
+            var result = _customerService.Delete(Unit);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+            return Ok();
+        }
+
+
 
 
     }

@@ -161,8 +161,8 @@ namespace EtisiqueApi.Controllers
                                  {
                                      id = R.id,
                                      projectName = R.Project.ProjectName,
-                                     BuildingName = R.BuildingName,
-                                     UnitNo = R.UnitNo,
+                                     BuildingName = R.Customer.BulidingName,
+                                     UnitNo = R.Customer.UnitNo,
                                      ClientPhone = R.ClientPhone,
                                      ClientName = R.ClientName,
                                      TechnicianName = R.Technician.FullName,
@@ -279,7 +279,7 @@ namespace EtisiqueApi.Controllers
 
         [HttpGet("ClientRequests/{CustomerId}/{Page}/{PageSize}")]
         [Authorize(Policy = "KitchenServices.Client")]
-        public async Task<IActionResult> GetClientRequests(int CustomerId, int Page = 1, int PageSize = 10, string Status = null, string code = null, DateOnly date = default)
+        public async Task<IActionResult> GetClientRequests(string CustomerId, int Page = 1, int PageSize = 10, string Status = null, string code = null, DateOnly date = default)
         {
             var Requests = await _KitchenService.GetRequestToCustomer(CustomerId, code, Status, date)
                             .Select(R => new KitchenServiceResponse()

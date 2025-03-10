@@ -55,6 +55,7 @@ namespace EtisiqueApi.Controllers
 
                 try
                 {
+
                      
                     ApartmentServicesRequest lastOrder = _apartmentServices.LastOrder(apartmentService.hasGuarantee);
                     int RequestCode = 1100;
@@ -231,7 +232,7 @@ namespace EtisiqueApi.Controllers
 
         [HttpGet("ClientRquests/{CustomerId}/{Page}/{PageSize}")]
         [Authorize(policy: "maintenanceRequests.Clients")]
-         public async Task<IActionResult> GetClientRquests(int CustomerId, bool hasGuarantee, int Page = 1, int PageSize = 10 ,string Status=null , string code = null, DateOnly date = default)
+         public async Task<IActionResult> GetClientRquests(string CustomerId, bool hasGuarantee, int Page = 1, int PageSize = 10 ,string Status=null , string code = null, DateOnly date = default)
         {
             var Requests = await _apartmentServices.GetRequestToCustomer(CustomerId,hasGuarantee,code,Status ,date).ToPaginatedListAsync(Page, PageSize);
             return Ok(Requests);

@@ -85,7 +85,7 @@ namespace EtisiqueApi.Repositiories
             }
               if (BuildingName != null)
             {
-                requests = requests.Where(R => R.BuildingName.Contains(BuildingName));
+                requests = requests.Where(R => R.Customer.BulidingName.Contains(BuildingName));
 
             }
               if (Code != null)
@@ -100,7 +100,7 @@ namespace EtisiqueApi.Repositiories
             }
               if(UnitNo != 0)
             {
-                requests = requests.Where(R => R.UnitNo == UnitNo);
+                requests = requests.Where(R => R.Customer.UnitNo == UnitNo);
 
             }
               if (ClientPhone != null)
@@ -110,7 +110,7 @@ namespace EtisiqueApi.Repositiories
             }
               if(day > 0)
             {
-                DateOnly currentData = DateOnly.FromDateTime(DateTime.Now);
+                DateOnly currentData = DateOnly.FromDateTime(DateTime.UtcNow);
                 requests = requests.Where(R => R.RequestStuatus == "جديد" && DateOnly.FromDateTime(R.DateOfVisit) == currentData);
 
 
@@ -118,7 +118,7 @@ namespace EtisiqueApi.Repositiories
               if (week > 0)
             {
                 // تحديد بداية ونهاية الأسبوع الحالي
-                DateOnly startOfWeek = DateOnly.FromDateTime(DateTime.Now.StartOfWeek(DayOfWeek.Sunday));
+                DateOnly startOfWeek = DateOnly.FromDateTime(DateTime.UtcNow.StartOfWeek(DayOfWeek.Sunday));
                 DateOnly endOfWeek = startOfWeek.AddDays(7);
 
                 // فلترة الطلبات خلال هذا الأسبوع
@@ -127,13 +127,13 @@ namespace EtisiqueApi.Repositiories
             }
               if (month > 0)
             {
-                int CurrentMonth = DateTime.Now.Month;
+                int CurrentMonth = DateTime.UtcNow.Month;
                 requests = requests.Where(R => R.DateOfVisit.Month == CurrentMonth);
 
             }
               if (year > 0)
             {
-                int CurrentYear = DateTime.Now.Year;
+                int CurrentYear = DateTime.UtcNow.Year;
 
                 requests = requests.Where(R => R.DateOfVisit.Year == CurrentYear);
 
@@ -265,7 +265,7 @@ namespace EtisiqueApi.Repositiories
             }
              else if(day > 0)
             {
-                DateOnly currentData = DateOnly.FromDateTime(DateTime.Now);
+                DateOnly currentData = DateOnly.FromDateTime(DateTime.UtcNow);
                 requests = requests.Where(R => R.RequestStuatus == "جديد" && DateOnly.FromDateTime(R.DateOfVisit) == currentData)
                             .AsQueryable();
             }
@@ -300,7 +300,7 @@ namespace EtisiqueApi.Repositiories
                         CloseCode = R.CloseCode
                     }).AsQueryable();
         }
-        public IQueryable<ApartmentRequestDto> GetRequestToCustomer(int CustomerId,bool hasGuarantee , string code, string Status, DateOnly date=default)
+        public IQueryable<ApartmentRequestDto> GetRequestToCustomer(string CustomerId,bool hasGuarantee , string code, string Status, DateOnly date=default)
       {
             var requests = _context.ApartmentServicesRequests.AsNoTracking()
                             .Include(R => R.Project)
@@ -309,7 +309,7 @@ namespace EtisiqueApi.Repositiories
                             .Include(R => R.ApplicationUser)
                             .Include(R => R.ServiceType)
                             .OrderByDescending(R => R.id)
-                            .Where(R => R.CustomerId == CustomerId && R.hasGuarantee == hasGuarantee);
+                            .Where(R => R.Customer.UserId == CustomerId && R.hasGuarantee == hasGuarantee);
              if (code!=null && date != default)
             {
                 requests = requests
@@ -648,54 +648,53 @@ namespace EtisiqueApi.Repositiories
             var requests = _context.ApartmentServicesRequests.AsNoTracking()
                             .Where(R =>projects.Any(userProject => userProject == R.projectId) && R.hasGuarantee == hasGuarantee)
                             .AsQueryable();
-
             if (projectName != null)
             {
                 requests = requests.Where(R => R.Project.ProjectName.Contains(projectName));
             }
-              if (TypeServiceId != 0)
+            if (TypeServiceId != 0)
             {
                 requests = requests.Where(R => R.ServiceTypeId == TypeServiceId);
 
             }
-              if (techniciId != null)
+            if (techniciId != null)
             {
                 requests = requests.Where(R => R.TechnicianId == techniciId);
 
             }
-              if (ClientName != null)
+            if (ClientName != null)
             {
                 requests = requests.Where(R => R.ClientName.Contains(ClientName));
 
             }
-              if (BuildingName != null)
+            if (BuildingName != null)
             {
-                requests = requests.Where(R => R.BuildingName.Contains(BuildingName));
+                requests = requests.Where(R => R.Customer.BulidingName.Contains(BuildingName));
 
             }
-              if (Code != null)
+            if (Code != null)
             {
                 requests = requests.Where(R => R.RequestCode.ToString().Contains(Code));
 
             }
-              if (Status != null)
+            if (Status != null)
             {
                 requests = requests.Where(R => R.RequestStuatus == Status);
 
             }
-              if (UnitNo != 0)
+            if (UnitNo != 0)
             {
-                requests = requests.Where(R => R.UnitNo == UnitNo);
+                requests = requests.Where(R => R.Customer.UnitNo == UnitNo);
 
             }
-              if (ClientPhone != null)
+            if (ClientPhone != null)
             {
                 requests = requests.Where(R => R.ClientPhone.Contains(ClientPhone));
 
             }
-              if (day > 0)
+            if (day > 0)
             {
-                DateOnly currentData = DateOnly.FromDateTime(DateTime.Now);
+                DateOnly currentData = DateOnly.FromDateTime(DateTime.UtcNow);
                 requests = requests.Where(R => R.RequestStuatus == "جديد" && DateOnly.FromDateTime(R.DateOfVisit) == currentData);
 
 
@@ -703,7 +702,7 @@ namespace EtisiqueApi.Repositiories
               if (week > 0)
             {
                 // تحديد بداية ونهاية الأسبوع الحالي
-                DateOnly startOfWeek = DateOnly.FromDateTime(DateTime.Now.StartOfWeek(DayOfWeek.Sunday));
+                DateOnly startOfWeek = DateOnly.FromDateTime(DateTime.UtcNow.StartOfWeek(DayOfWeek.Sunday));
                 DateOnly endOfWeek = startOfWeek.AddDays(7);
 
                 // فلترة الطلبات خلال هذا الأسبوع
@@ -712,13 +711,13 @@ namespace EtisiqueApi.Repositiories
             }
               if (month > 0)
             {
-                int CurrentMonth = DateTime.Now.Month;
+                int CurrentMonth = DateTime.UtcNow.Month;
                 requests = requests.Where(R => R.DateOfVisit.Month == CurrentMonth);
 
             }
               if (year > 0)
             {
-                int CurrentYear = DateTime.Now.Year;
+                int CurrentYear = DateTime.UtcNow.Year;
 
                 requests = requests.Where(R => R.DateOfVisit.Year == CurrentYear);
 

@@ -23,17 +23,19 @@ namespace EtisiqueApi.Controllers
         IRequestManagement _requestManagement;
         IAcountService _acountService;
         private IRequestImage _requestImage;
+        IGenaricService<DaysOff> _DaysOffService;
         public CommonPartsController(ICommonPartsService CommonPartsService, IFileService fileService,
-            ISubServiceRequestService subServiceRequestService, IRequestImage requestImage,IRequestManagement requestManagement, IAcountService acountService) {
+            ISubServiceRequestService subServiceRequestService, IRequestImage requestImage,
+            IRequestManagement requestManagement, IAcountService acountService, IGenaricService<DaysOff> daysOffService)
+        {
 
-            _CommonPartsService= CommonPartsService;    
+            _CommonPartsService = CommonPartsService;
             _fileService = fileService;
             _subServiceRequestService = subServiceRequestService;
             _requestManagement = requestManagement;
             _acountService = acountService;
             _requestImage = requestImage;
-
-
+            _DaysOffService = daysOffService;
         }
         [HttpPost("Add")]
         [Authorize(policy: "commonPartsRequest.Add")]
@@ -44,7 +46,7 @@ namespace EtisiqueApi.Controllers
    
                 try
                 {
-                    
+              
                     RequestsCommonParts lastOrder = _CommonPartsService.LastOrder(commonParts.IsCleaning);
                     int RequestCode = 1100;
 
@@ -108,8 +110,7 @@ namespace EtisiqueApi.Controllers
                             return BadRequest(result3.Errors);
                         }
                     }
-                    
- 
+                   
                     return Ok();
 
                 }
@@ -482,6 +483,16 @@ namespace EtisiqueApi.Controllers
         //    return BadRequest();
         //}
 
+        [HttpGet("IsMaxRequestsLimitReached")]
+        [AllowAnonymous]
+        public async Task<IActionResult> IsMaxRequestsLimitReachedAsync()
+        {
+            bool GreaterThen20 = await _CommonPartsService.AreTwentyRequestsAddedTodayAsync();
+            
+                return Ok(new { result = GreaterThen20 });
+            
+
+        }
 
 
     }

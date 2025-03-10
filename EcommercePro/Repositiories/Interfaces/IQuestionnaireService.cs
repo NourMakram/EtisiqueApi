@@ -20,6 +20,7 @@ namespace EtisiqueApi.Repositiories.Interfaces
         public bool IsRated(int requestId, int typeservice);
         public bool IsRequester(int requestId, int typeservice, string userId);
         public Task<(bool Succeeded, string[] Errors)> Delete(int id);
+        public EvelautionDetails GetEvelautionDetails(int id);
 
     }
 }

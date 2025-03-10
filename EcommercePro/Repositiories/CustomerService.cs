@@ -3,7 +3,7 @@ using EtisiqueApi.DTO;
 using EtisiqueApi.Models;
 using EtisiqueApi.Repositiories.Interfaces;
 using Microsoft.EntityFrameworkCore;
- 
+
 namespace EtisiqueApi.Repositiories
 {
     public class CustomerService:GenaricService<Customer>,ICustomerService
@@ -59,7 +59,7 @@ namespace EtisiqueApi.Repositiories
         }
         public override async Task<Customer> GetByIdAsync(int id)
         {
-            return await _Customer.AsNoTracking().Include(c => c.ApplicationUser).ThenInclude(c=>c.Project).Include(c=>c.Locations).
+            return await _Customer.AsNoTracking().Include(c => c.ApplicationUser).Include(c=>c.Project).Include(c=>c.Locations).
                 FirstOrDefaultAsync(c => c.Id == id && c.ApplicationUser.IsDeleted == false && c.ApplicationUser.IsEnable == true);
         }
 
@@ -85,7 +85,7 @@ namespace EtisiqueApi.Repositiories
                     return (false, result.Errors);
                 }
                 //send message to user 
-                string Message = MessageSender2.Messages.ReceiveMsg(customerdb.ApplicationUser.FullName, Code,customerdb.ApplicationUser.Project.ProjectName,customerdb.BulidingName,customerdb.UnitNo.ToString());
+                string Message = MessageSender2.Messages.ReceiveMsg(customerdb.ApplicationUser.FullName, Code,customerdb.Project.ProjectName,customerdb.BulidingName,customerdb.UnitNo.ToString());
                 var resultMsg = await _MessageService.Send3Async(customerdb.ApplicationUser.PhoneNumber, Message, null);
                 if (!resultMsg)
                 {
@@ -107,13 +107,13 @@ namespace EtisiqueApi.Repositiories
         public IQueryable<Client> ClientsReservation(string projectName = null, string buildingName = null, string ClientName = null, string ClientPhone = null, DateOnly from = default, DateOnly to = default)
         {
             var results = _Customer.Include(C => C.ApplicationUser)
-				.ThenInclude(C => C.Project)
+				.Include(C => C.Project)
 				.OrderByDescending(C=>C.Id)
                 .Where(c => c.IsReceived == true);
 
             if (projectName != null)
             {
-                results = results.Where(c=>c.ApplicationUser.Project.ProjectName.Contains(projectName));
+                results = results.Where(c=>c.Project.ProjectName.Contains(projectName));
             }
             if (buildingName != null)
             {
@@ -140,34 +140,34 @@ namespace EtisiqueApi.Repositiories
             return  results.
                 Select(c => new Client()
                 {
-                    Id = c.UserId,
+                    Id = c.Id,
                     FullName = c.ApplicationUser.FullName,
                     Email = c.ApplicationUser.Email,
                     phoneNumber = c.ApplicationUser.PhoneNumber,
                     UnitNum = c.UnitNo,
                     BuildingName = c.BulidingName,
-                    project = c.ApplicationUser.Project.ProjectName,
+                    project = c.Project.ProjectName,
                     ReceivedDate = c.ReceivedDate != null ? c.ReceivedDate.Value.ToString("dd-MM-yyyy hh:mm tt") : "No date available"
 
 
                 }).AsQueryable();
         }
-        public async Task<Client> GetClientReservation(string UserId)
+        public async Task<Client> GetUnitDetails(int UnitId)
         {
 
             Client client = await _Customer
-                     .Where(c => c.IsReceived == true && c.UserId == UserId)
+                     .Where(c => c.Id==UnitId)
                      .Include(c => c.ApplicationUser)
-                     .ThenInclude(a => a.Project)
+                     .Include(a => a.Project)
                      .Select(c => new Client
                      {
-                         Id = c.UserId,
+                         Id = c.Id,
                          FullName = c.ApplicationUser.FullName,
                          Email = c.ApplicationUser.Email,
                          phoneNumber = c.ApplicationUser.PhoneNumber,
                          UnitNum = c.UnitNo,
                          BuildingName = c.BulidingName,
-                         project = c.ApplicationUser.Project.ProjectName,
+                         project = c.Project.ProjectName,
                          ReceivedCode = c.ReceivedCode,
                          ReceivedDate = c.ReceivedDate!= null ? c.ReceivedDate.Value.ToString("dd-MM-yyyy") : "No date available"
                      })
@@ -175,6 +175,15 @@ namespace EtisiqueApi.Repositiories
 
             return client;
           }
+        public bool IsHajarPRojct(int unitId)
+        {
+            var result = _Customer
+                        .Include(c => c.ApplicationUser)
+                        .Include(a => a.Project)
+                        .Any(c => c.IsReceived == false && c.Project.ProjectName.Contains("هاجر") && c.Id == unitId);
+
+         return result;
+        }
         public async Task<(bool Succeeded, string[] Errors)> ConfirmReservation(int id, string Code)
         {
             Customer customerdb = await GetByIdAsync(id);
@@ -206,11 +215,15 @@ namespace EtisiqueApi.Repositiories
             string ClientPhone,DateOnly from , DateOnly to)
         {
             var results = _Customer.Include(C => C.ApplicationUser)
-                 .ThenInclude(C => C.Project)
+                 .Include(C => C.Project)
                  .OrderByDescending(C => C.Id)
-                 .Where(c => c.ApplicationUser.projectId == projectId && c.ApplicationUser.IsDeleted==false);
+                 .Where(c =>  c.ApplicationUser.IsDeleted==false);
+            if (projectId != 0)
+            {
+                results = results.Where(c => c.projectId == projectId);
 
-           
+            }
+
             if (buidingName != null)
             {
                 results = results.Where(c => c.BulidingName == buidingName);
@@ -241,7 +254,7 @@ namespace EtisiqueApi.Repositiories
             return results.
                 Select(c => new Client()
                 {
-                    Id=c.Id.ToString(),
+                    Id=c.Id,
                     userId = c.UserId,
                     FullName = c.ApplicationUser.FullName,
                     Email = c.ApplicationUser.Email,
@@ -250,7 +263,7 @@ namespace EtisiqueApi.Repositiories
                     BuildingName = c.BulidingName,
                     GuaranteeStart=c.GuaranteeStart,
                     GuaranteeEnd=c.GuaranteeEnd,
-                    project = c.ApplicationUser.Project.ProjectName,
+                    project = c.Project.ProjectName,
                     ReceivedDate = c.ReceivedDate != null ? c.ReceivedDate.Value.ToString("dd-MM-yyyy hh:mm tt") : "No date available"
                    
 
@@ -263,8 +276,8 @@ namespace EtisiqueApi.Repositiories
            
            Customer unitData = _Customer
                        .Include(C => C.ApplicationUser)
-                       .ThenInclude(C => C.Project)
-                       .FirstOrDefault(R => R.UserId == userId && R.ApplicationUser.projectId == projectId && R.UnitNo == unitNo && R.BulidingName == buidingName);
+                       .Include(C => C.Project)
+                       .FirstOrDefault(R => R.UserId == userId && R.projectId == projectId && R.UnitNo == unitNo && R.BulidingName == buidingName);
             if (unitData == null)
             {
                 return false;
@@ -311,6 +324,108 @@ namespace EtisiqueApi.Repositiories
             return true;
             
 
+        }
+
+		public List<unit> GetUnitsByUserId(string userId)
+		{
+          List<unit> units =  _Customer.Where(C => C.UserId == userId)
+                .Include(C => C.Project)
+                .Select(C => new unit()
+                {
+                    Id = C.Id,
+                    UnitNum=C.UnitNo,
+                    BuildingName=C.BulidingName,
+                    project = C.Project.ProjectName
+
+                }).ToList();
+            return units;
+		}
+
+        public bool IsGuaranteeAvailable(int UnitId)
+        {
+            DateOnly now = DateOnly.FromDateTime(DateTime.UtcNow);
+
+            Customer unitData = _Customer.FirstOrDefault(R => R.Id == UnitId);
+            if (unitData == null)
+            {
+                return false;
+            }
+            if (unitData.GuaranteeEnd == null || unitData.GuaranteeEnd >= now)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+         
+
+        public async Task<(bool Succeeded, string[] Errors)> AddUnit(NewUnit newUnit)
+        {
+            Customer Customerdb = GetCustomerByUserID(newUnit.UserId);
+            if (Customerdb == null)
+            {
+                return (false,new string[]{ "customer Not Found" });
+            }
+
+            Customer Unit = new Customer()
+            {
+                IsReceived = false,
+                BulidingName=newUnit.BuidingName,
+                UnitNo=newUnit.UnitNo,
+                projectId=newUnit.projectId,
+                TypeProject=newUnit.TypeProject,
+                UserId=newUnit.UserId,
+                City=Customerdb.City,
+                GuaranteeStart=newUnit.GuaranteeStart,
+                GuaranteeEnd=newUnit.GuaranteeEnd
+            };
+           var result = await base.AddAsync(Unit);
+            if (!result.Succeeded)
+            {
+                return (false, result.Errors);
+            }
+            return (true, null);
+        }
+
+        public async Task<(bool Succeeded, string[] Errors)> UnpdateUnit(NewUnit newUnit)
+        {
+            Customer Unitdb =await _Customer.FirstOrDefaultAsync(c => c.Id == newUnit.id && c.ApplicationUser.IsDeleted == false && c.ApplicationUser.IsEnable == true); 
+            if (Unitdb == null)
+            {
+                return (false, new string[] { "Unit Not Found" });
+            }
+
+            Unitdb.BulidingName = newUnit.BuidingName;
+            Unitdb.UnitNo = newUnit.UnitNo;
+            Unitdb.projectId = newUnit.projectId;
+            Unitdb.TypeProject = newUnit.TypeProject;
+            Unitdb.GuaranteeStart = newUnit.GuaranteeStart;
+            Unitdb.GuaranteeEnd = newUnit.GuaranteeEnd;
+              var result =  base.Update(Unitdb);
+            if (!result.Succeeded)
+            {
+                return (false, result.Errors);
+            }
+            return (true, null);
+        }
+
+        public List<unit> UnitsWithGuarantee(string userId)
+        {
+            DateOnly now = DateOnly.FromDateTime(DateTime.UtcNow);
+
+          List<unit> Units  =  _Customer.Where(Uint => Uint.UserId == userId && 
+          (Uint.GuaranteeEnd == null || Uint.GuaranteeEnd >= now)).
+          Include(C => C.Project)
+                .Select(C => new unit()
+                {
+                    Id = C.Id,
+                    UnitNum = C.UnitNo,
+                    BuildingName = C.BulidingName,
+                    project = C.Project.ProjectName
+
+                }).ToList();
+            return Units;
         }
     }
 }

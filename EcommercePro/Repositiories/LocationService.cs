@@ -24,6 +24,14 @@ namespace EtisiqueApi.Repositiories
             return _Location.AsNoTracking()
             .FirstOrDefault(L => L.customerId == customerId );
         }
+
+
+        public Location GetLocationByUserId(string userId)
+        {
+            return _Location.AsNoTracking().Include(C=>C.Customer)
+            .FirstOrDefault(L => L.Customer.UserId == userId);
+        }
+
         public async Task<(bool Succeeded, string[] Errors,int LocationId)> AddLocationAsync(int customerId, double Longitude, double Latitude)
         {
             Location CustomerLocation = GetLocationByCustomerId(customerId, Longitude, Latitude);

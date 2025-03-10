@@ -33,7 +33,7 @@ namespace EtisiqueApi.DTO
         public double Longitude { get; set; }
 
         [Required(ErrorMessage = "Period is Required")]
-        [AllowedValues(["10am:2pm", "4pm:8pm"])]
+        //[AllowedValues(["10am:2pm", "4pm:8pm"])]
         public string Period { set; get; }
         [Required(ErrorMessage = "Area is Required")]
         public string Area { set; get; } // 15 * 12

@@ -91,14 +91,14 @@ namespace EtisiqueApi.Repositiories
 
         }
 
-        public IQueryable<KitchenServices> GetRequestToCustomer(int CustomerId, string code, string Status, DateOnly date = default)
+        public IQueryable<KitchenServices> GetRequestToCustomer(string CustomerId, string code, string Status, DateOnly date = default)
         {
             var Request = _context.KitchenServices.AsNoTracking()
                       .Include(R => R.Project)
                       .Include(R => R.Technician)
                       .Include(R => R.Customer)
                       .ThenInclude(R => R.ApplicationUser)
-                      .Where(K => K.CustomerId == CustomerId)
+                      .Where(K => K.Customer.UserId == CustomerId)
                       .OrderByDescending(R=>R.id)
                       .AsQueryable();
             if (code != null)

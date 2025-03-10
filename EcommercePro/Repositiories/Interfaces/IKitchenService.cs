@@ -9,7 +9,7 @@ namespace EtisiqueApi.Repositiories.Interfaces
         public IQueryable<KitchenServices> FilterRequestsBy(
         string projectName = null,string techniciName = null, string ClientName = null,
         string BuildingName = null, int UnitNo = 0, string ClientPhone = null, string Code = null, string Stauts = null, int day = 0);
-        public IQueryable<KitchenServices> GetRequestToCustomer(int CustomerId, string code, string Status, DateOnly date = default);
+        public IQueryable<KitchenServices> GetRequestToCustomer(string CustomerId, string code, string Status, DateOnly date = default);
         public IQueryable<KitchenServices> GetRequestToTechninics(string TechincanId, string Status , int day=0);
         public Task<(bool Succeeded, string[] Errors)> Transfer(TransferDto tranferData);
         public Task<(bool Succeeded, string[] Errors)> CloseByCode(CloseDto closeData);

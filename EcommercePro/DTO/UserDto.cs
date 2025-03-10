@@ -1,4 +1,5 @@
-﻿using EtisiqueApi.Models;
+﻿using EcommercePro.Models;
+using EtisiqueApi.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -88,7 +89,7 @@ namespace EtisiqueApi.DTO
     }
     public class Client
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string FullName { get; set; }
         public string phoneNumber { get; set; }
         public string Email { set; get; }
@@ -103,6 +104,30 @@ namespace EtisiqueApi.DTO
 
 
     }
+    public class unit
+    {
+		public int Id { get; set; }
+ 		public string BuildingName { get; set; }
+		public int UnitNum { get; set; }
+		public string project { set; get; }
+	}
+    public class UnitDetails
+    {
+        public int id { set; get; }
+         public string FullName { set; get; }
+        public string Email { set; get; }
+        public string PhoneNumber { set; get; }
+        public int projectId { set; get; }
+        public string TypeProject { set; get; }
+        public string City { set; get; }
+        public int UnitNo { set; get; }
+        public double Latitude { set; get; }
+        public double Longitude { set; get; }
+        public string UserId { set; get; }
+        public string BuidingName { set; get; }
+        public DateOnly? GuaranteeStart { set; get; }
+        public DateOnly? GuaranteeEnd { set; get; }
+    }
     public class UnitsManagmentDto
     {
         [Required]
@@ -111,6 +136,25 @@ namespace EtisiqueApi.DTO
         public DateOnly start { set; get; }
         [Required]
         public DateOnly end { set; get; }
+
+    }
+    public class NewUnit
+    {
+        public int id { set; get; }
+        [Required]
+        public string UserId { get; set; }
+        [Required]
+        public int UnitNo { set; get; }
+        [Required]
+        public string BuidingName { set; get; }
+        [Required]
+        public int projectId { set; get; }
+        [Required]
+        public string TypeProject { set; get; }
+
+        public DateOnly? GuaranteeStart { set; get; }
+        public DateOnly? GuaranteeEnd { set; get; }
+
 
     }
 }

@@ -364,6 +364,7 @@ namespace EcommercePro.Controllers
                         UserId = user.Id,
                         BulidingName = registerDto.BulidingName,
                         UnitNo = registerDto.UnitNo,
+                        projectId=registerDto.projectId,
                         City = registerDto.City,
                         TypeProject = registerDto.TypeProject,
                     };
@@ -783,15 +784,15 @@ namespace EcommercePro.Controllers
         }
 
 
-        [HttpGet("ClientReceiving/{userId}")]
-        [Authorize]
-        public async Task<IActionResult> ClientReceiving(string userId)
-        {
-            Client clientdb =await _customerService.GetClientReservation(userId);
+        //[HttpGet("ClientReceiving/{userId}")]
+        //[Authorize]
+        //public async Task<IActionResult> ClientReceiving(string userId)
+        //{
+        //    Client clientdb =await _customerService.GetClientReservation(userId);
 
-            return Ok(clientdb);
+        //    return Ok(clientdb);
 
-        }
+        //}
         [HttpGet("ClientsReceiving")]
         [Authorize(policy: "ClientsReceiving.manage")]
         public async Task<IActionResult> ClientsReceiving(int page=1,int pageSize=10,string projectName=null,string buildingName=null,string ClientName=null,string ClientPhone=null,DateOnly from=default,DateOnly to=default)
@@ -854,6 +855,31 @@ namespace EcommercePro.Controllers
 
         }
 
+        //[HttpGet]
+        //[AllowAnonymous]
+        //public  async Task<IActionResult> ChagneProject()
+        //{
+        //   var users = await _AcountService.GetUsersByRole("عميل");
+        //    foreach (UserBasicInfoDto user in users.Users) {
+
+        //        ApplicationUser userdb = await _AcountService.GetUserByIdAsync(user.Id);
+        //        Customer customerdb = _customerService.GetCustomerByUserID(user.Id);
+        //        if(customerdb!=null && customerdb.projectId == null)
+        //        {
+        //            customerdb.projectId = userdb.projectId;
+
+        //            var result = _customerService.Update(customerdb);
+        //            if (!result.Succeeded)
+        //            {
+        //                return BadRequest(result.Errors);
+
+        //            }
+        //        }
+               
+        //    }
+        //    return Ok();
+            
+        // }
 
 
     }

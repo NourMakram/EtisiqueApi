@@ -92,7 +92,7 @@ namespace EtisiqueApi.Controllers
         [HttpGet("ClientRquests/{CustomerId}/{Page}/{PageSize}")]
         [Authorize(policy: "EmergencyRequests.Clients")]
 
-        public async Task<IActionResult> GetClientRquests(int CustomerId, int Page = 1, int PageSize = 10, string Status = null, string code = null, DateOnly date = default)
+        public async Task<IActionResult> GetClientRquests(string CustomerId, int Page = 1, int PageSize = 10, string Status = null, string code = null, DateOnly date = default)
         {
             var Requests = await _emergencyService.GetRequestToCustomer(CustomerId, code, Status, date).ToPaginatedListAsync(Page, PageSize);
             return Ok(Requests);

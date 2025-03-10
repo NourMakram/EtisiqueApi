@@ -255,7 +255,7 @@ namespace EtisiqueApi.Repositiories
 
             }
             List<EvelautionTechnicianAVgDto> AvarageRating = new List<EvelautionTechnicianAVgDto>();
-            for(int i = 0; i < 5; i++)
+            for(int i = 0; i < 4; i++)
             {
                 var question1Ratings = query.Where(Q => Q.questionId == (i+1)).ToList();
                 // 100, 80  ,حساب عدد الأشخاص الذين حصلوا على 20 و40
@@ -267,8 +267,8 @@ namespace EtisiqueApi.Repositiories
                 // حساب المتوسط
                 double average20 = count20 > 0 ? (double)count20 / question1Ratings.Count * 100 : 0;
                 double average40 = count40 > 0 ? (double)count40 / question1Ratings.Count * 100 : 0;
-                double average80 = count40 > 0 ? (double)count80 / question1Ratings.Count * 100 : 0;
-                double average100 = count40 > 0 ? (double)count100 / question1Ratings.Count * 100 : 0;
+                double average80 = count80 > 0 ? (double)count80 / question1Ratings.Count * 100 : 0;
+                double average100 = count100 > 0 ? (double)count100 / question1Ratings.Count * 100 : 0;
 
                 AvarageRating.Add(new EvelautionTechnicianAVgDto()
                 {
@@ -351,8 +351,8 @@ namespace EtisiqueApi.Repositiories
                 // حساب المتوسط
                 double average20 = count20 > 0 ? (double)count20 / question1Ratings.Count * 100 : 0;
                 double average40 = count40 > 0 ? (double)count40 / question1Ratings.Count * 100 : 0;
-                double average80 = count40 > 0 ? (double)count80 / question1Ratings.Count * 100 : 0;
-                double average100 = count40 > 0 ? (double)count100 / question1Ratings.Count * 100 : 0;
+                double average80 = count80 > 0 ? (double)count80 / question1Ratings.Count * 100 : 0;
+                double average100 = count100 > 0 ? (double)count100 / question1Ratings.Count * 100 : 0;
 
                 AvarageRating.Add(new EvelautionTechnicianAVgDto()
                 {
@@ -493,6 +493,44 @@ namespace EtisiqueApi.Repositiories
                 return (false, new string[] { "can`t delete this Reuest" });
             }
 
+        }
+        public EvelautionDetails GetEvelautionDetails(int id)
+        {
+            EvelautionDetails evelautionDetails = new EvelautionDetails();
+
+           Questionnaire questionnairedb = _Context.Questionnaires.FirstOrDefault(Q => Q.Id == id);
+            if (questionnairedb == null)
+            {
+                return null;
+            }
+            evelautionDetails.managerNote = questionnairedb.ManagerNote;
+            evelautionDetails.ServiceNote = questionnairedb.ServiceNote;
+            evelautionDetails.TechincalNote = questionnairedb.TechnicianNote;
+            evelautionDetails.Ratings = new List<Rating>();
+            var results  = _Context.TechnicianQusetions
+               .Where(R => R.questionnaireId == id)
+               .Select(Q => new
+               {
+                   questionid =Q.questionId,
+                   answer = Q.AnswerId,
+               }).ToList();
+            foreach (var result in results)
+            {
+                var question = ConsQuesteion.Questeions.FirstOrDefault(q => q.Id == result.questionid);
+                if (question != null) // تأكد من أن السؤال غير null
+                {
+                    evelautionDetails.Ratings.Add(new Rating()
+                    {
+                        question = question.Name,
+                        answer = result.answer,
+                    });
+                }
+            }
+
+
+            return evelautionDetails;
+
+              
         }
     }
 

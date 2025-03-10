@@ -76,6 +76,20 @@ namespace EtisiqueApi.DTO
         public string Note { set; get; }
     }
 
+    public class Rating
+    {
+        public string? question { set; get; }
+        public int answer { set; get; }
+    }
+
+    public class EvelautionDetails
+    {
+        public List<Rating> Ratings { get; set; }
+        public string managerNote { set; get; }
+        public string TechincalNote { set; get; }
+        public string ServiceNote { set; get; }
+    }
+
 
 
     }
