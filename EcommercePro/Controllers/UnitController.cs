@@ -23,9 +23,9 @@ namespace EtisiqueApi.Controllers
             _customerService = customerService;
             _locationService = locationService;
         }
-        [HttpGet("UnitsManagment/{page}/{pagesize}/{projectId}")]
+        [HttpGet("UnitsManagment/{page}/{pagesize}")]
         [Authorize(policy: "projects.manage")]
-        public async Task<IActionResult> UnitsManagment(int projectId,int page=1 , int pagesize=10, 
+        public async Task<IActionResult> UnitsManagment(int projectId=0,int page=1,int pagesize=10, 
             string buidingName=null, string ClientName=null,
             string ClientPhone=null, DateOnly from=default, DateOnly to=default)
         {

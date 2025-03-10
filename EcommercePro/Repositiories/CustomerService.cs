@@ -211,7 +211,7 @@ namespace EtisiqueApi.Repositiories
 
         }
 
-        public IQueryable<Client> UnitsManagement(int projectId, string buidingName, string ClientName,
+        public IQueryable<Client> UnitsManagement(int projectId,string buidingName, string ClientName,
             string ClientPhone,DateOnly from , DateOnly to)
         {
             var results = _Customer.Include(C => C.ApplicationUser)
