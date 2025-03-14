@@ -112,7 +112,7 @@ namespace EtisiqueApi.Controllers
                 {
                    if(!daysoff.Contains(date.ToString()))
                     {
-                        daysoff.Add(date.ToString());
+                        daysoff.Add(date.ToString("dd/MM/yyyy"));
 
                     }
                 }

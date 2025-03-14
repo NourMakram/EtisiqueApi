@@ -53,7 +53,7 @@ public class Program
         builder.Services.AddScoped<IComplaintService, ComplaintService>();
         builder.Services.AddScoped<IEmergencyService, EmergencyService>();
         builder.Services.AddScoped<IRequestImage, RequestImage>();
-
+        builder.Services.AddScoped<IGenaricService<CompleteDays>,GenaricService<CompleteDays>>();
 
 
         builder.Services.Configure<SecurityStampValidatorOptions>(options =>

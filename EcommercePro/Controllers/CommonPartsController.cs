@@ -24,9 +24,11 @@ namespace EtisiqueApi.Controllers
         IAcountService _acountService;
         private IRequestImage _requestImage;
         IGenaricService<DaysOff> _DaysOffService;
+        IGenaricService<CompleteDays> _CompleteDaysService;
         public CommonPartsController(ICommonPartsService CommonPartsService, IFileService fileService,
             ISubServiceRequestService subServiceRequestService, IRequestImage requestImage,
-            IRequestManagement requestManagement, IAcountService acountService, IGenaricService<DaysOff> daysOffService)
+            IRequestManagement requestManagement, IAcountService acountService,
+            IGenaricService<DaysOff> daysOffService, IGenaricService<CompleteDays> completeDaysService)
         {
 
             _CommonPartsService = CommonPartsService;
@@ -36,6 +38,7 @@ namespace EtisiqueApi.Controllers
             _acountService = acountService;
             _requestImage = requestImage;
             _DaysOffService = daysOffService;
+            _CompleteDaysService = completeDaysService;
         }
         [HttpPost("Add")]
         [Authorize(policy: "commonPartsRequest.Add")]
@@ -110,7 +113,23 @@ namespace EtisiqueApi.Controllers
                             return BadRequest(result3.Errors);
                         }
                     }
-                   
+
+                    bool GreaterThen20 = await _CommonPartsService.AreTwentyRequestsAddedTodayAsync(DateOnly.FromDateTime(commonParts.DateOfVisit));
+                    if (GreaterThen20 == true && commonParts.IsCleaning == false)
+                    {
+                      var result =await _CompleteDaysService.AddAsync(new CompleteDays()
+                        {
+                            date = DateOnly.FromDateTime(commonParts.DateOfVisit),
+                            serviceType=ServiceTypeEnum.CommonParts
+                        });
+
+                        if (!result.Succeeded)
+                        {
+                           return BadRequest(result.Errors);
+                        }
+
+                    }
+
                     return Ok();
 
                 }
@@ -483,17 +502,44 @@ namespace EtisiqueApi.Controllers
         //    return BadRequest();
         //}
 
-        [HttpGet("IsMaxRequestsLimitReached")]
+        [HttpGet("CompleteDays")]
         [AllowAnonymous]
-        public async Task<IActionResult> IsMaxRequestsLimitReachedAsync()
+        public  IActionResult CompleteDays()
         {
-            bool GreaterThen20 = await _CommonPartsService.AreTwentyRequestsAddedTodayAsync();
-            
-                return Ok(new { result = GreaterThen20 });
-            
+            List<string> CommpleteDays = new List<string>();
+
+           var results =  _CompleteDaysService.GetAll().Select(c=>c.date.ToString("dd/MM/yyyy"));
+
+            return Ok(results);
+
 
         }
+        [HttpDelete("DeleteCompleteDays")]
+        [AllowAnonymous]
+        public async Task<IActionResult> DeleteCompleteDays(int id)
+        {
+            CompleteDays completeDays = await _CompleteDaysService.GetByIdAsync(id);
 
+            List<CompleteDays> Days = _CompleteDaysService.GetAll();
+            foreach(CompleteDays day in Days)
+            {
+                if (day == null)
+                {
+                    return BadRequest("Not Found");
+                }
+                var results = _CompleteDaysService.Delete(day);
+                if (!results.Succeeded)
+                {
+                    return BadRequest(results.Errors);
+                }
+
+            }
+
+           
+            return Ok();
+
+
+        }
 
     }
 

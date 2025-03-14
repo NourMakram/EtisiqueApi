@@ -45,7 +45,7 @@ namespace EtisiqueApi.Repositiories
 
         public IQueryable<ApartmentService> GetServices()
         {
-            return _dbContext.ApartmentServices.AsNoTracking().AsQueryable();
+            return _dbContext.ApartmentServices.AsNoTracking().Where(A=>A.Id!=10).AsQueryable();
         }
         public IQueryable<ApartmentServicesType> GetApartmentServiceTypeByServiceId(int serviceId)
         {

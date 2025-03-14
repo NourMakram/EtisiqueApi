@@ -45,6 +45,7 @@ namespace EcommercePro.Models
         public DbSet<RequestsImages> RequestsImages { get; set; }
         public DbSet<Attchments> Attchments { set; get; }
         public DbSet<EmergencyTypes> EmergencyTypes { set; get; }
+        public DbSet<CompleteDays> CompleteDays { set; get; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

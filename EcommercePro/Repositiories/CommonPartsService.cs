@@ -1071,12 +1071,11 @@ namespace EtisiqueApi.Repositiories
 
         }
 
-        public async Task<bool> AreTwentyRequestsAddedTodayAsync()
+        public async Task<bool> AreTwentyRequestsAddedTodayAsync(DateOnly date)
         {
-            var tomorrow = DateTime.UtcNow.Date.AddDays(1); // الحصول على تاريخ الغد
-           
-            var count = await _context.RequestCommonParts
-                .CountAsync(r => r.DateOfVisit.Date == tomorrow); // تأكد من أن لديك حقل DateOfVisit
+            
+            var count = await _context.RequestCommonParts.Where(R=>R.IsCleaning == false)
+                .CountAsync(r => DateOnly.FromDateTime(r.DateOfVisit) == date); // تأكد من أن لديك حقل DateOfVisit
 
             //return count >= 2;
             return count >= 20; // إرجاع true إذا كان العدد 20 أو أكثر
